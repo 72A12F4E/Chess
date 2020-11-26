@@ -18,6 +18,7 @@
 		250B9962256F220D00AAD4B2 /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9961256F220D00AAD4B2 /* Move.swift */; };
 		250B996B256F223D00AAD4B2 /* ChessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B996A256F223D00AAD4B2 /* ChessTests.swift */; };
 		250B9975256F28E400AAD4B2 /* PieceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9974256F28E400AAD4B2 /* PieceTests.swift */; };
+		250B9979256F387B00AAD4B2 /* PawnTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9978256F387B00AAD4B2 /* PawnTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		250B996A256F223D00AAD4B2 /* ChessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessTests.swift; sourceTree = "<group>"; };
 		250B996C256F223D00AAD4B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		250B9974256F28E400AAD4B2 /* PieceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceTests.swift; sourceTree = "<group>"; };
+		250B9978256F387B00AAD4B2 /* PawnTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PawnTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				250B996A256F223D00AAD4B2 /* ChessTests.swift */,
+				250B9978256F387B00AAD4B2 /* PawnTests.swift */,
 				250B9974256F28E400AAD4B2 /* PieceTests.swift */,
 				250B996C256F223D00AAD4B2 /* Info.plist */,
 			);
@@ -240,6 +243,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				250B9979256F387B00AAD4B2 /* PawnTests.swift in Sources */,
 				250B9975256F28E400AAD4B2 /* PieceTests.swift in Sources */,
 				250B996B256F223D00AAD4B2 /* ChessTests.swift in Sources */,
 			);

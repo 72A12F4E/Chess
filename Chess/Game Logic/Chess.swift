@@ -8,9 +8,19 @@
 import Foundation
 
 class Chess {
-    var turn: Color = .white
-    var board: [Piece] = initialBoardState
-    var history: [Move] = []
+    var turn: Color
+    var board: [Piece]
+    var history: [Move]
+    
+    init(
+        turn: Color = .white,
+        board: [Piece] = initialBoardState,
+        history: [Move] = []
+    ) {
+        self.turn = turn
+        self.board = board
+        self.history = history
+    }
 
     func isValidMove(_ move: Move) -> Result<Void, MoveError> {
         guard turn == move.piece.color else {
@@ -64,7 +74,8 @@ class Chess {
             (source.file - 2, source.rank + 1),
             (source.file - 1, source.rank - 2),
             (source.file - 2, source.rank - 1),
-        ].filter { (1...8).contains($0.0) && (1...8).contains($0.1) }.map {
+        ].filter { (1...8).contains($0.0) && (1...8).contains($0.1) }
+        .map {
             BoardLocation(file: $0.0, rank: $0.1)
         }.contains(move.destination)
         
@@ -80,41 +91,52 @@ class Chess {
     }
     
     private func isValidMovePawn(_ move: Move) -> Result<Void, MoveError> {
+        let sourceRank = move.piece.location.rank
+        let sourceFile = move.piece.location.file
+        let destRank = move.destination.rank
+        let destFile = move.destination.file
         if move.piece.color == .white {
             // Standard pawn move
-            if move.piece.location.file == move.destination.file &&
-                move.piece.location.rank == move.destination.rank - 1 &&
+            if sourceFile == destFile &&
+                sourceRank == destRank - 1 &&
                 !board.map(\.location).contains(move.destination) {
                 return .success(())
             }
             // Pawn opening double move
-            else if move.piece.location.rank == 2  &&
-                move.piece.location.file == move.destination.file &&
-                move.piece.location.rank == move.destination.rank - 2 {
+            else if sourceRank == 2 &&
+                sourceFile == destFile &&
+                sourceRank == destRank - 2 {
                 return .success(())
             }
-            // Capture :TODO:
-            
+            // Pawn Capture
+            else if (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
+                sourceRank == destRank - 1 &&
+                board.map(\.location).contains(move.destination) {
+                return .success(())
+            }
             // invalid move
             else {
                 return .failure(.invalidMove)
             }
         } else {
             // Standard pawn move
-            if move.piece.location.file == move.destination.file &&
-                move.piece.location.rank == move.destination.rank + 1 &&
+            if sourceFile == destFile &&
+                sourceRank == destRank + 1 &&
                 !board.map(\.location).contains(move.destination) {
                 return .success(())
             }
             // Pawn opening double move
-            else if move.piece.location.rank == 7  &&
-                move.piece.location.file == move.destination.file &&
-                move.piece.location.rank == move.destination.rank + 2 {
+            else if sourceRank == 7  &&
+                sourceFile == destFile &&
+                sourceRank == destRank + 2 {
                 return .success(())
             }
-            
-            // Capture :TODO:
-            
+            // Pawn Capture
+            else if (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
+                sourceRank == destRank + 1 &&
+                board.map(\.location).contains(move.destination) {
+                return .success(())
+            }
             // invalid move
             else {
                 return .failure(.invalidMove)
@@ -123,21 +145,34 @@ class Chess {
     }
     
     func apply(_ move: Move) -> Result<Void, MoveError> {
-        guard let index = board.firstIndex(of: move.piece) else {
-            return .failure(.noPieceAtLocation)
-        }
-        
         let result = isValidMove(move)
         if case .success = result {
-            turn = turn == .white ? .black : .white
+            
             history.append(move)
-            board[index] = Piece(
-                kind: move.piece.kind,
-                color: move.piece.color,
-                location: move.destination
-            )
+            //if its a capture, remove old piece
+            if let capturedIndex = board.firstIndex(where: { $0.location == move.destination }) {
+                board.remove(at: capturedIndex)
+            }
+            if let index = board.firstIndex(of: move.piece) {
+                board[index] = Piece(
+                    kind: move.piece.kind,
+                    color: move.piece.color,
+                    location: move.destination
+                )
+            } else {
+                panic([
+                    "message": "attempted to replace moved piece and failed",
+                    "board": boardView,
+                    "move": move.description
+                ])
+            }
+            turn = turn == .white ? .black : .white
         }
         return result
+    }
+    
+    private func panic(_ dictionary: [String: String]) -> Never {
+        fatalError(dictionary.description)
     }
 }
 
