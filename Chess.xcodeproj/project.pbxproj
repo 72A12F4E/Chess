@@ -20,6 +20,7 @@
 		250B9975256F28E400AAD4B2 /* PieceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9974256F28E400AAD4B2 /* PieceTests.swift */; };
 		250B9979256F387B00AAD4B2 /* PawnTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9978256F387B00AAD4B2 /* PawnTests.swift */; };
 		250B997D256F470F00AAD4B2 /* RookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B997C256F470F00AAD4B2 /* RookTests.swift */; };
+		250B9982256F639400AAD4B2 /* ChessBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9981256F639400AAD4B2 /* ChessBoardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,7 @@
 		250B9974256F28E400AAD4B2 /* PieceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceTests.swift; sourceTree = "<group>"; };
 		250B9978256F387B00AAD4B2 /* PawnTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PawnTests.swift; sourceTree = "<group>"; };
 		250B997C256F470F00AAD4B2 /* RookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RookTests.swift; sourceTree = "<group>"; };
+		250B9981256F639400AAD4B2 /* ChessBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessBoardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 				250B9954256F219A00AAD4B2 /* Game Logic */,
 				250B9941256F216000AAD4B2 /* ChessApp.swift */,
 				250B9943256F216000AAD4B2 /* ContentView.swift */,
+				250B9981256F639400AAD4B2 /* ChessBoardView.swift */,
 				250B9945256F216200AAD4B2 /* Assets.xcassets */,
 				250B994A256F216200AAD4B2 /* Info.plist */,
 				250B9947256F216200AAD4B2 /* Preview Content */,
@@ -232,6 +235,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				250B9982256F639400AAD4B2 /* ChessBoardView.swift in Sources */,
 				250B9962256F220D00AAD4B2 /* Move.swift in Sources */,
 				250B9956256F219A00AAD4B2 /* Chess.swift in Sources */,
 				250B9959256F21A900AAD4B2 /* Color.swift in Sources */,
