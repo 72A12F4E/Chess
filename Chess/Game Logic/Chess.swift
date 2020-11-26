@@ -178,6 +178,7 @@ class Chess: ObservableObject {
         }
     }
     
+    @discardableResult
     func apply(_ move: Move) -> Result<Void, MoveError> {
         let result = isValidMove(move)
         if case .success = result {
