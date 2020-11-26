@@ -51,3 +51,37 @@ extension Piece: CustomStringConvertible {
         }
     }
 }
+
+#if canImport(SwiftUI)
+import SwiftUI
+extension Piece {
+    var image: Image {
+        switch (kind, color) {
+        case (.king, .white):
+            return Image("whiteking")
+        case (.queen, .white):
+            return Image("whitequeen")
+        case (.bishop, .white):
+            return Image("whitebishop")
+        case (.knight, .white):
+            return Image("whiteknight")
+        case (.rook, .white):
+            return Image("whiterook")
+        case (.pawn, .white):
+            return Image("whitepawn")
+        case (.king, .black):
+            return Image("blackking")
+        case (.queen, .black):
+            return Image("blackqueen")
+        case (.bishop, .black):
+            return Image("blackbishop")
+        case (.knight, .black):
+            return Image("blackknight")
+        case (.rook, .black):
+            return Image("blackrook")
+        case (.pawn, .black):
+            return Image("blackpawn")
+        }
+    }
+}
+#endif

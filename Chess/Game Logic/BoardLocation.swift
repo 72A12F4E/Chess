@@ -7,8 +7,19 @@
 
 import Foundation
 
-struct BoardLocation: Equatable {
+struct BoardLocation: Equatable, Hashable {
+    /// Files are columns that go up and down the chessboard.
+    /// Files are indicated with the letters 'a' through 'h'
+    ///
+    /// https://www.dummies.com/games/chess/naming-ranks-and-files-in-chess/
     let file: Int
+    
+    /// Ranks are rows that go from side to side across
+    /// the chessboard and are referred to by numbers. Each
+    /// chessboard has eight ranks, which are numbered from
+    /// the bottom of the board (where the white pieces start) on up.
+    ///
+    /// https://www.dummies.com/games/chess/naming-ranks-and-files-in-chess/
     let rank: Int
 }
 

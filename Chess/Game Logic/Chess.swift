@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
+import Combine
 
-class Chess {
-    var turn: Color
-    var board: [Piece]
-    var history: [Move]
+class Chess: ObservableObject {
+    @Published var turn: Color
+    @Published var board: [Piece]
+    @Published var history: [Move]
     
     init(
         turn: Color = .white,
@@ -50,9 +52,8 @@ class Chess {
         if abs(move.destination.rank - move.piece.location.rank) <= 1 &&
             abs(move.destination.file - move.piece.location.file) <= 1 {
             return .success(())
-        } else {
-            return .failure(.invalidMove)
         }
+        return .failure(.invalidMove)
     }
     
     private func isValidMoveQueen(_ move: Move) -> Result<Void, MoveError> {
@@ -81,13 +82,46 @@ class Chess {
         
         if isValid {
             return .success(())
-        } else {
-            return .failure(.invalidMove)
         }
+        
+        return .failure(.invalidMove)
     }
     
     private func isValidMoveRook(_ move: Move) -> Result<Void, MoveError> {
-        .failure(.invalidMove)
+        let sourceRank = move.piece.location.rank
+        let sourceFile = move.piece.location.file
+        let destRank = move.destination.rank
+        let destFile = move.destination.file
+        // Rooks can only move along their current rank & file
+        guard sourceRank == destRank || sourceFile == destFile else {
+            return .failure(.invalidMove)
+        }
+        
+        // Validate that there aren't any pieces blocking the movement
+        // Generate the span betwen the source & destination & validate no pieces are in between
+        // Note the `..<` on the range operator to make sure we don't
+        // accidentally check the destination, which might be a capture
+        if sourceRank == destRank {
+            let minRank = min(sourceRank, destRank)
+            let maxRank = max(sourceRank, destRank)
+            let span = (minRank..<maxRank).map {
+                BoardLocation(file: sourceFile, rank: $0)
+            }
+            if Set(board.map(\.location)).intersection(span).isEmpty {
+                return .success(())
+            }
+        } else {
+            let minFile = min(sourceFile, destFile)
+            let maxFile = max(sourceFile, destFile)
+            let span = (minFile..<maxFile).map {
+                BoardLocation(file: $0, rank: sourceRank)
+            }
+            if Set(board.map(\.location)).intersection(span).isEmpty {
+                return .success(())
+            }
+        }
+        
+        return .failure(.invalidMove)
     }
     
     private func isValidMovePawn(_ move: Move) -> Result<Void, MoveError> {
@@ -192,7 +226,7 @@ extension Chess: CustomDebugStringConvertible {
             }
             string.append("\n")
         }
-        return string
+        return string.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     var debugDescription: String {

@@ -19,6 +19,7 @@
 		250B996B256F223D00AAD4B2 /* ChessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B996A256F223D00AAD4B2 /* ChessTests.swift */; };
 		250B9975256F28E400AAD4B2 /* PieceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9974256F28E400AAD4B2 /* PieceTests.swift */; };
 		250B9979256F387B00AAD4B2 /* PawnTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9978256F387B00AAD4B2 /* PawnTests.swift */; };
+		250B997D256F470F00AAD4B2 /* RookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B997C256F470F00AAD4B2 /* RookTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		250B996C256F223D00AAD4B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		250B9974256F28E400AAD4B2 /* PieceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceTests.swift; sourceTree = "<group>"; };
 		250B9978256F387B00AAD4B2 /* PawnTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PawnTests.swift; sourceTree = "<group>"; };
+		250B997C256F470F00AAD4B2 /* RookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RookTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 				250B9978256F387B00AAD4B2 /* PawnTests.swift */,
 				250B9974256F28E400AAD4B2 /* PieceTests.swift */,
 				250B996C256F223D00AAD4B2 /* Info.plist */,
+				250B997C256F470F00AAD4B2 /* RookTests.swift */,
 			);
 			path = ChessTests;
 			sourceTree = "<group>";
@@ -243,6 +246,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				250B997D256F470F00AAD4B2 /* RookTests.swift in Sources */,
 				250B9979256F387B00AAD4B2 /* PawnTests.swift in Sources */,
 				250B9975256F28E400AAD4B2 /* PieceTests.swift in Sources */,
 				250B996B256F223D00AAD4B2 /* ChessTests.swift in Sources */,

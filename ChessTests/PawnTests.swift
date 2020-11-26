@@ -21,19 +21,6 @@ class PawnTests: XCTestCase {
         
         XCTAssertNoThrow(try move1.get())
         XCTAssertNoThrow(try move2.get())
-        
-        // Needs some work: maybe multiline string formatting is off?
-//        let boardState = """
-//        ♖♘♗♕♔♗♘♖
-//        ♙♙♙♙ ♙♙♙
-//            ♙
-//
-//
-//            ♟
-//        ♟♟♟♟ ♟♟♟
-//        ♜♞♝♛♚♝♞♜
-//        """
-//        XCTAssertEqual(boardState, chess.boardView)
     }
     
     func testPawnOpeningMove() throws {
