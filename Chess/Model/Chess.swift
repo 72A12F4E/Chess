@@ -84,7 +84,37 @@ class Chess: ObservableObject {
     }
     
     private func isValidMoveBishop(_ move: Move) -> Result<Void, MoveError> {
-        .failure(.invalidMove)
+        let sourceRank = move.piece.location.rank
+        let sourceFile = move.piece.location.file
+        let destRank = move.destination.rank
+        let destFile = move.destination.file
+        
+        // Bishops can only move along a diagonal
+        guard abs(sourceRank - destRank) == abs(sourceFile - destFile) else {
+            return .failure(.invalidMove)
+        }
+        
+        let minFile = min(sourceFile, destFile) + 1
+        let maxFile = max(sourceFile, destFile)
+        let fileSpan = sourceFile < destFile ?
+            AnyCollection((minFile..<maxFile)) :
+            AnyCollection((minFile..<maxFile).reversed())
+        
+        let minRank = min(sourceRank, destRank) + 1
+        let maxRank = max(sourceRank, destRank)
+        let rankSpan = sourceRank < destRank ?
+            AnyCollection((minRank..<maxRank)) :
+            AnyCollection((minRank..<maxRank).reversed())
+        
+        // Validate that there aren't any pieces blocking the movement.
+        // Generate the span betwen the source & destination & validate no pieces are in between.
+        guard Set(zip(fileSpan, rankSpan).map {
+            BoardLocation(file: $0, rank: $1)
+        }).intersection(board.map(\.location)).isEmpty else {
+            return .failure(.invalidMove)
+        }
+        
+        return .success(())
     }
     
     private func isValidMoveKnight(_ move: Move) -> Result<Void, MoveError>  {
@@ -172,9 +202,7 @@ class Chess: ObservableObject {
                 return .success(())
             }
             // invalid move
-            else {
-                return .failure(.invalidMove)
-            }
+            return .failure(.invalidMove)
         } else {
             // Standard pawn move
             if sourceFile == destFile &&
@@ -195,9 +223,7 @@ class Chess: ObservableObject {
                 return .success(())
             }
             // invalid move
-            else {
-                return .failure(.invalidMove)
-            }
+            return .failure(.invalidMove)
         }
     }
     

@@ -10,6 +10,21 @@ import XCTest
 
 class PawnTests: XCTestCase {
 
+    func testPawnInvalidMove() throws {
+        let whitePawn = Piece(kind: .pawn, color: .white, location: .d4)
+        let blackPawn = Piece(kind: .pawn, color: .black, location: .e5)
+        let board = [
+            whitePawn,
+            blackPawn,
+        ]
+        let chess = Chess(turn: .white, board: board)
+        let move = chess.apply(
+            Move(piece: Piece(kind: .pawn, color: .white, location: .d4), destination: .d6)
+        )
+        
+        XCTAssertThrowsError(try move.get())
+    }
+    
     func testPawnRegularMove() throws {
         let chess = Chess()
         let move1 = chess.apply(

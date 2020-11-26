@@ -33,7 +33,8 @@ struct ChessBoardView: View {
                                     }
                                 }
                             if let piece = chess.piece(rank: rank, file: file) {
-                                piece.image.resizable()
+                                piece.image
+                                    .resizable()
                                     .onTapGesture {
                                         if let selected = selectedSquare, let piece = chess.piece(for: selected) {
                                             let target = BoardLocation(file: file, rank: rank)
@@ -45,6 +46,9 @@ struct ChessBoardView: View {
                                             self.selectedSquare = BoardLocation(file: file, rank: rank)
                                         }
                                     }
+                            } else {
+                                Text(BoardLocation(file: file, rank: rank).description)
+                                    .font(.footnote)
                             }
                         }
                     }

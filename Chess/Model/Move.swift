@@ -14,7 +14,7 @@ struct Move {
 
 extension Move: CustomStringConvertible {
     var description: String {
-        "\(piece.description)\(piece.location.description) \(destination.description)"
+        "\(piece.description) \(piece.location.description) \(destination.description)"
     }
 }
 

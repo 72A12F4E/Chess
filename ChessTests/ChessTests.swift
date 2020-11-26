@@ -28,16 +28,4 @@ class ChessTests: XCTestCase {
         let chess = Chess()
         XCTAssertEqual(chess.boardView, chess.debugDescription)
     }
-    
-    func testKnightsOpeningMove() throws {
-        let chess = Chess()
-        let move1 = chess.apply(
-            Move(piece: Piece(kind: .knight, color: .white, location: .b1), destination: .c3)
-        )
-        let move2 = chess.apply(
-            Move(piece: Piece(kind: .knight, color: .black, location: .g8), destination: .f6)
-        )
-        XCTAssertNoThrow(try move1.get())
-        XCTAssertNoThrow(try move2.get())
-    }
 }

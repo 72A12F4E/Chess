@@ -9,6 +9,20 @@ import XCTest
 @testable import Chess
 
 class RookTests: XCTestCase {
+    
+    func testRookInvalidMove() throws {
+        let rook = Piece(kind: .rook, color: .white, location: .a1)
+        let board = [
+            rook,
+        ]
+        let chess = Chess(turn: .white, board: board)
+        let move = chess.apply(
+            Move(piece: rook, destination: .g3)
+        )
+        
+        XCTAssertThrowsError(try move.get())
+    }
+    
     func testRookMoveRank() throws {
         let rook = Piece(kind: .rook, color: .white, location: .a1)
         let board = [

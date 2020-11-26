@@ -15,9 +15,12 @@ struct ContentView: View {
     var body: some View {
         VStack {
             Text("\(chess.turn == .white ? "White" : "Black")'s move")
+                .font(.largeTitle)
             ChessBoardView()
                 .padding()
-            Text(chess.history.map(\.description).joined(separator: " "))
+            MoveHistoryView()
+                .padding()
+            
         }
     }
 }
