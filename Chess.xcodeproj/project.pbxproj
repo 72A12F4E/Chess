@@ -93,7 +93,7 @@
 		250B9940256F216000AAD4B2 /* Chess */ = {
 			isa = PBXGroup;
 			children = (
-				250B9954256F219A00AAD4B2 /* Game Logic */,
+				250B9954256F219A00AAD4B2 /* Model */,
 				250B9941256F216000AAD4B2 /* ChessApp.swift */,
 				250B9943256F216000AAD4B2 /* ContentView.swift */,
 				250B9981256F639400AAD4B2 /* ChessBoardView.swift */,
@@ -112,7 +112,7 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		250B9954256F219A00AAD4B2 /* Game Logic */ = {
+		250B9954256F219A00AAD4B2 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				250B9955256F219A00AAD4B2 /* Chess.swift */,
@@ -121,7 +121,7 @@
 				250B995E256F21E900AAD4B2 /* Piece.swift */,
 				250B9961256F220D00AAD4B2 /* Move.swift */,
 			);
-			path = "Game Logic";
+			path = Model;
 			sourceTree = "<group>";
 		};
 		250B9969256F223D00AAD4B2 /* ChessTests */ = {
