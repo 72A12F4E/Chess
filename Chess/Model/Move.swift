@@ -23,4 +23,5 @@ enum MoveError: Error {
     case invalidMove
     case kingInCheck
     case wrongTurn
+    case moveToSameLocation
 }

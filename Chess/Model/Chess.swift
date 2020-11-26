@@ -28,6 +28,9 @@ class Chess: ObservableObject {
         guard turn == move.piece.color else {
             return .failure(.wrongTurn)
         }
+        guard move.piece.location != move.destination else {
+            return .failure(.moveToSameLocation)
+        }
         guard board.contains(move.piece) else {
             return .failure(.noPieceAtLocation)
         }
