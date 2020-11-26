@@ -24,4 +24,5 @@ enum MoveError: Error {
     case kingInCheck
     case wrongTurn
     case moveToSameLocation
+    case noCaptureOwnPiece
 }

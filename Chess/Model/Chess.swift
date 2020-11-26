@@ -28,11 +28,20 @@ class Chess: ObservableObject {
         guard turn == move.piece.color else {
             return .failure(.wrongTurn)
         }
+        
         guard move.piece.location != move.destination else {
             return .failure(.moveToSameLocation)
         }
+        
         guard board.contains(move.piece) else {
             return .failure(.noPieceAtLocation)
+        }
+        
+        guard !Set(board.filter {
+                $0.color == move.piece.color
+            }.map(\.location))
+            .contains(move.destination) else {
+            return .failure(.noCaptureOwnPiece)
         }
         
         switch move.piece.kind {
@@ -60,7 +69,18 @@ class Chess: ObservableObject {
     }
     
     private func isValidMoveQueen(_ move: Move) -> Result<Void, MoveError> {
-        .failure(.invalidMove)
+        // A queen is just a combination of a Rook & Bishop
+        // so we can re-use their validation
+        let result1 = isValidMoveRook(move)
+        if case .success = result1 {
+            return result1
+        }
+        let result2 = isValidMoveBishop(move)
+        if case .success = result2 {
+            return result2
+        }
+        
+        return .failure(.invalidMove)
     }
     
     private func isValidMoveBishop(_ move: Move) -> Result<Void, MoveError> {
@@ -100,26 +120,26 @@ class Chess: ObservableObject {
             return .failure(.invalidMove)
         }
         
-        // Validate that there aren't any pieces blocking the movement
-        // Generate the span betwen the source & destination & validate no pieces are in between
+        // Validate that there aren't any pieces blocking the movement.
+        // Generate the span betwen the source & destination & validate no pieces are in between.
         // Note the `..<` on the range operator to make sure we don't
         // accidentally check the destination, which might be a capture
         if sourceRank == destRank {
-            let minFile = min(sourceFile, destFile) + 1
+            let minFile = min(sourceFile, destFile)
             let maxFile = max(sourceFile, destFile)
             let span = (minFile..<maxFile).map {
                 BoardLocation(file: $0, rank: sourceRank)
             }
-            if Set(board.map(\.location)).intersection(span).isEmpty {
+            if Set(board.map(\.location)).intersection(span).count == 1 {
                 return .success(())
             }
         } else {
-            let minRank = min(sourceRank, destRank) + 1
+            let minRank = min(sourceRank, destRank)
             let maxRank = max(sourceRank, destRank)
             let span = (minRank..<maxRank).map {
                 BoardLocation(file: sourceFile, rank: $0)
             }
-            if Set(board.map(\.location)).intersection(span).isEmpty {
+            if Set(board.map(\.location)).intersection(span).count == 1 {
                 return .success(())
             }
         }
@@ -184,28 +204,30 @@ class Chess: ObservableObject {
     @discardableResult
     func apply(_ move: Move) -> Result<Void, MoveError> {
         let result = isValidMove(move)
-        if case .success = result {
-            
-            history.append(move)
-            //if its a capture, remove old piece
-            if let capturedIndex = board.firstIndex(where: { $0.location == move.destination }) {
-                board.remove(at: capturedIndex)
-            }
-            if let index = board.firstIndex(of: move.piece) {
-                board[index] = Piece(
-                    kind: move.piece.kind,
-                    color: move.piece.color,
-                    location: move.destination
-                )
-            } else {
-                panic([
-                    "message": "attempted to replace moved piece and failed",
-                    "board": boardView,
-                    "move": move.description
-                ])
-            }
-            turn = turn == .white ? .black : .white
+        guard case .success = result else {
+            return result
         }
+        
+        history.append(move)
+        // If move is a capture, remove old piece
+        if let capturedIndex = board.firstIndex(where: { $0.location == move.destination }) {
+            board.remove(at: capturedIndex)
+        }
+        // Replace existing piece with the one that just moved
+        if let index = board.firstIndex(of: move.piece) {
+            board[index] = Piece(
+                kind: move.piece.kind,
+                color: move.piece.color,
+                location: move.destination
+            )
+        } else {
+            panic([
+                "message": "attempted to replace moved piece and failed",
+                "board": boardView,
+                "move": move.description
+            ])
+        }
+        turn = turn == .white ? .black : .white
         return result
     }
     
@@ -213,6 +235,8 @@ class Chess: ObservableObject {
         fatalError(dictionary.description)
     }
 }
+
+// MARK: Piece Querys
 
 extension Chess {
     func piece(for boardLocation: BoardLocation) -> Piece? {
@@ -223,6 +247,8 @@ extension Chess {
         return piece(for: BoardLocation(file: file, rank: rank))
     }
 }
+
+// MARK: Debug Output
 
 extension Chess: CustomDebugStringConvertible {
     var boardView: String {

@@ -10,27 +10,88 @@ import XCTest
 
 class RookTests: XCTestCase {
     func testRookMoveRank() throws {
+        let rook = Piece(kind: .rook, color: .white, location: .a1)
         let board = [
-            Piece(kind: .rook, color: .white, location: .a1),
+            rook,
         ]
         let chess = Chess(turn: .white, board: board)
         let move = chess.apply(
-            Move(piece: Piece(kind: .pawn, color: .black, location: .e5), destination: .d4)
+            Move(piece: rook, destination: .h1)
         )
         
         XCTAssertNoThrow(try move.get())
     }
     
     func testRookMoveFile() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let rook = Piece(kind: .rook, color: .white, location: .a1)
+        let board = [
+            rook,
+        ]
+        let chess = Chess(turn: .white, board: board)
+        let move = chess.apply(
+            Move(piece: rook, destination: .a8)
+        )
+        
+        XCTAssertNoThrow(try move.get())
     }
     
     func testRookCaptureRank() throws {
+        let rook = Piece(kind: .rook, color: .white, location: .a1)
+        let knight = Piece(kind: .knight, color: .black, location: .h1)
+        let board = [
+            rook,
+            knight,
+        ]
+        let chess = Chess(turn: .white, board: board)
+        let move = chess.apply(
+            Move(piece: rook, destination: .h1)
+        )
         
+        XCTAssertNoThrow(try move.get())
     }
     
     func testRookCaptureFile() throws {
+        let rook = Piece(kind: .rook, color: .white, location: .a1)
+        let knight = Piece(kind: .knight, color: .black, location: .a8)
+        let board = [
+            rook,
+            knight,
+        ]
+        let chess = Chess(turn: .white, board: board)
+        let move = chess.apply(
+            Move(piece: rook, destination: .a8)
+        )
         
+        XCTAssertNoThrow(try move.get())
+    }
+    
+    func testRookMoveRankBlocked() throws {
+        let rook = Piece(kind: .rook, color: .white, location: .a1)
+        let queen = Piece(kind: .queen, color: .black, location: .g1)
+        let board = [
+            rook,
+            queen
+        ]
+        let chess = Chess(turn: .white, board: board)
+        let move = chess.apply(
+            Move(piece: rook, destination: .h1)
+        )
+        
+        XCTAssertThrowsError(try move.get())
+    }
+    
+    func testRookMoveFileBlocked() throws {
+        let rook = Piece(kind: .rook, color: .white, location: .a1)
+        let queen = Piece(kind: .queen, color: .black, location: .a5)
+        let board = [
+            rook,
+            queen
+        ]
+        let chess = Chess(turn: .white, board: board)
+        let move = chess.apply(
+            Move(piece: rook, destination: .a8)
+        )
+        
+        XCTAssertThrowsError(try move.get())
     }
 }
