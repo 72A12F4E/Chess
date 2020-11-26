@@ -105,19 +105,19 @@ class Chess: ObservableObject {
         // Note the `..<` on the range operator to make sure we don't
         // accidentally check the destination, which might be a capture
         if sourceRank == destRank {
-            let minRank = min(sourceRank, destRank)
-            let maxRank = max(sourceRank, destRank)
-            let span = (minRank..<maxRank).map {
-                BoardLocation(file: sourceFile, rank: $0)
+            let minFile = min(sourceFile, destFile) + 1
+            let maxFile = max(sourceFile, destFile)
+            let span = (minFile..<maxFile).map {
+                BoardLocation(file: $0, rank: sourceRank)
             }
             if Set(board.map(\.location)).intersection(span).isEmpty {
                 return .success(())
             }
         } else {
-            let minFile = min(sourceFile, destFile)
-            let maxFile = max(sourceFile, destFile)
-            let span = (minFile..<maxFile).map {
-                BoardLocation(file: $0, rank: sourceRank)
+            let minRank = min(sourceRank, destRank) + 1
+            let maxRank = max(sourceRank, destRank)
+            let span = (minRank..<maxRank).map {
+                BoardLocation(file: sourceFile, rank: $0)
             }
             if Set(board.map(\.location)).intersection(span).isEmpty {
                 return .success(())
