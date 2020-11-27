@@ -286,10 +286,16 @@ extension Chess {
 }
 
 extension Chess {
-    func isThreatened(piece: Piece) -> Bool {
-//        let color = piece.color
-//        let opponentsPieces
-        false
+    static func isThreatened(piece: Piece, board: [Piece]) -> Bool {
+        // A piece is threatened if the opponent has a piece on the board
+        // that can legally move to the described location.
+        board.filter { $0.color != piece.color }
+            .contains {
+            if case .success = isValidMove(board: board, move: Move(piece: $0, destination: piece.location)) {
+                return true
+            }
+            return false
+        }
     }
 }
 

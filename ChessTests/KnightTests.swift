@@ -10,25 +10,22 @@ import XCTest
 
 class KnightTests: XCTestCase {
     func testKnightsOpeningMove() throws {
-        let chess = Chess()
-        let move1 = chess.apply(
-            Move(piece: Piece(kind: .knight, color: .white, location: .b1), destination: .c3)
-        )
-        let move2 = chess.apply(
+        try [
+            Move(piece: Piece(kind: .knight, color: .white, location: .b1), destination: .c3),
             Move(piece: Piece(kind: .knight, color: .black, location: .g8), destination: .f6)
-        )
-        XCTAssertNoThrow(try move1.get())
-        XCTAssertNoThrow(try move2.get())
+        ].forEach {
+            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0).get())
+        }
     }
     
     func testKnightInvalidMove() throws {
         let knight = Piece(kind: .knight, color: .white, location: .b1)
-        let chess = Chess(turn: .white, board: [
-            knight,
-        ])
-        let move = chess.apply(
-            Move(piece: knight, destination: .b2)
+        let board = [knight]
+        XCTAssertThrowsError(
+            try Chess.isValidMove(
+                board: board,
+                move: Move(piece: knight, destination: .b2)
+            ).get()
         )
-        XCTAssertThrowsError(try move.get())
     }
 }

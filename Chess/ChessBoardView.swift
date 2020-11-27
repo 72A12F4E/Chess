@@ -14,6 +14,12 @@ struct ChessBoardView: View {
     @State
     var selectedSquare: BoardLocation?
     
+    @State
+    var error: Error?
+    
+    @State
+    var isShowingError: Bool = false
+    
     var body: some View {
         HStack(spacing: 0) {
             ForEach(1..<9) { file in
@@ -26,6 +32,12 @@ struct ChessBoardView: View {
         }
         .border(SwiftUI.Color.black, width: 2)
         .aspectRatio(1.0, contentMode: .fit)
+        .alert(isPresented: $isShowingError) {
+            Alert(
+                title: Text("Error"),
+                message: Text(error?.localizedDescription ?? "")
+            )
+        }
     }
     
     
@@ -37,9 +49,13 @@ struct ChessBoardView: View {
                 .foregroundColor(color(rank: rank, file: file))
                 .border(SwiftUI.Color.black, width: 1)
                 .onTapGesture {
-                    if let selected = selectedSquare,
-                       let piece = chess.piece(rank: selected.rank, file: selected.file) {
-                        chess.apply(Move(piece: piece, destination: location))
+                    if let selected = selectedSquare, let piece = chess.piece(rank: selected.rank, file: selected.file) {
+                        do {
+                            try chess.apply(Move(piece: piece, destination: location)).get()
+                        } catch {
+                            self.error = error
+                            isShowingError = true
+                        }
                         selectedSquare = nil
                     }
                 }
@@ -48,8 +64,12 @@ struct ChessBoardView: View {
                     .resizable()
                     .onTapGesture {
                         if let selected = selectedSquare, let piece = chess.piece(for: selected) {
-                            chess.apply(Move(piece: piece, destination: location))
-                            selectedSquare = nil
+                            do {
+                                try chess.apply(Move(piece: piece, destination: location)).get()
+                            } catch {
+                                self.error = error
+                                isShowingError = true
+                            }
                         } else if chess.turn == piece.color {
                             self.selectedSquare = location
                         }
