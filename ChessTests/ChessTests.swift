@@ -12,16 +12,16 @@ class ChessTests: XCTestCase {
     
     func testInitialBoardView() throws {
         let chess = Chess()
-        XCTAssertEqual(chess.boardView, """
-        ♖♘♗♕♔♗♘♖
-        ♙♙♙♙♙♙♙♙
-                
-                
-                
-                
-        ♟♟♟♟♟♟♟♟
-        ♜♞♝♛♚♝♞♜
-        """)
+        var boardView = "" // Xcode formatting breaks multiline strings :-(
+        boardView += "♖♘♗♕♔♗♘♖" + "\n"
+        boardView += "♙♙♙♙♙♙♙♙" + "\n"
+        boardView += "        " + "\n"
+        boardView += "        " + "\n"
+        boardView += "        " + "\n"
+        boardView += "        " + "\n"
+        boardView += "♟♟♟♟♟♟♟♟" + "\n"
+        boardView += "♜♞♝♛♚♝♞♜"
+        XCTAssertEqual(chess.boardView, boardView)
     }
     
     func testBoardViewIsDebugDescription() throws {
