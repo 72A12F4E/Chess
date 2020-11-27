@@ -17,37 +17,30 @@ class PawnTests: XCTestCase {
             whitePawn,
             blackPawn,
         ]
-        let chess = Chess(turn: .white, board: board)
-        let move = chess.apply(
-            Move(piece: Piece(kind: .pawn, color: .white, location: .d4), destination: .d6)
+        let result = Chess.isValidMove(
+            board: board,
+            move: Move(piece: Piece(kind: .pawn, color: .white, location: .d4), destination: .d6)
         )
         
-        XCTAssertThrowsError(try move.get())
+        XCTAssertThrowsError(try result.get())
     }
     
     func testPawnRegularMove() throws {
-        let chess = Chess()
-        let move1 = chess.apply(
-            Move(piece: Piece(kind: .pawn, color: .white, location: .e2), destination: .e3)
-        )
-        let move2 = chess.apply(
-            Move(piece: Piece(kind: .pawn, color: .black, location: .e7), destination: .e6)
-        )
-        
-        XCTAssertNoThrow(try move1.get())
-        XCTAssertNoThrow(try move2.get())
+        try [
+            Move(piece: Piece(kind: .pawn, color: .white, location: .e2), destination: .e3),
+            Move(piece: Piece(kind: .pawn, color: .black, location: .e7), destination: .e6),
+        ].forEach {
+            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0).get())
+        }
     }
     
     func testPawnOpeningMove() throws {
-        let chess = Chess()
-        let move1 = chess.apply(
-            Move(piece: Piece(kind: .pawn, color: .white, location: .e2), destination: .e4)
-        )
-        let move2 = chess.apply(
-            Move(piece: Piece(kind: .pawn, color: .black, location: .e7), destination: .e5)
-        )
-        XCTAssertNoThrow(try move1.get())
-        XCTAssertNoThrow(try move2.get())
+        try [
+            Move(piece: Piece(kind: .pawn, color: .white, location: .e2), destination: .e4),
+            Move(piece: Piece(kind: .pawn, color: .black, location: .e7), destination: .e5),
+        ].forEach {
+            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0).get())
+        }
     }
     
     func testWhitePawnCapture() throws {
@@ -55,12 +48,11 @@ class PawnTests: XCTestCase {
             Piece(kind: .pawn, color: .white, location: .d4),
             Piece(kind: .pawn, color: .black, location: .e5)
         ]
-        let chess = Chess(turn: .white, board: board)
-        let move = chess.apply(
+        try [
             Move(piece: Piece(kind: .pawn, color: .white, location: .d4), destination: .e5)
-        )
-        
-        XCTAssertNoThrow(try move.get())
+        ].forEach {
+            XCTAssertNoThrow(try Chess.isValidMove(board: board, move: $0).get())
+        }
     }
     
     func testWhitePawnCaptureThrows() throws {
@@ -68,12 +60,11 @@ class PawnTests: XCTestCase {
             Piece(kind: .pawn, color: .white, location: .d5),
             Piece(kind: .pawn, color: .black, location: .e5)
         ]
-        let chess = Chess(turn: .white, board: board)
-        let move = chess.apply(
+        try [
             Move(piece: Piece(kind: .pawn, color: .white, location: .d4), destination: .e5)
-        )
-        
-        XCTAssertThrowsError(try move.get())
+        ].forEach {
+            XCTAssertThrowsError(try Chess.isValidMove(board: board, move: $0).get())
+        }
     }
     
     func testBlackPawnCapture() throws {
@@ -81,12 +72,11 @@ class PawnTests: XCTestCase {
             Piece(kind: .pawn, color: .white, location: .d4),
             Piece(kind: .pawn, color: .black, location: .e5)
         ]
-        let chess = Chess(turn: .black, board: board)
-        let move = chess.apply(
+        try [
             Move(piece: Piece(kind: .pawn, color: .black, location: .e5), destination: .d4)
-        )
-        
-        XCTAssertNoThrow(try move.get())
+        ].forEach {
+            XCTAssertNoThrow(try Chess.isValidMove(board: board, move: $0).get())
+        }
     }
     
     func testBlackPawnCaptureThrows() throws {
@@ -94,11 +84,10 @@ class PawnTests: XCTestCase {
             Piece(kind: .pawn, color: .white, location: .d5),
             Piece(kind: .pawn, color: .black, location: .e5)
         ]
-        let chess = Chess(turn: .black, board: board)
-        let move = chess.apply(
+        try [
             Move(piece: Piece(kind: .pawn, color: .black, location: .e5), destination: .d5)
-        )
-        
-        XCTAssertThrowsError(try move.get())
+        ].forEach {
+            XCTAssertThrowsError(try Chess.isValidMove(board: board, move: $0).get())
+        }
     }
 }

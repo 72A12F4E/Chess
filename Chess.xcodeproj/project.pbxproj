@@ -23,6 +23,7 @@
 		250B9982256F639400AAD4B2 /* ChessBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9981256F639400AAD4B2 /* ChessBoardView.swift */; };
 		250B9988256F6ECE00AAD4B2 /* KnightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9987256F6ECE00AAD4B2 /* KnightTests.swift */; };
 		250B998C256F7B8300AAD4B2 /* MoveHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B998B256F7B8300AAD4B2 /* MoveHistoryView.swift */; };
+		25585FC42571AD96004FF559 /* BishopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25585FC32571AD96004FF559 /* BishopTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		250B9981256F639400AAD4B2 /* ChessBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessBoardView.swift; sourceTree = "<group>"; };
 		250B9987256F6ECE00AAD4B2 /* KnightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnightTests.swift; sourceTree = "<group>"; };
 		250B998B256F7B8300AAD4B2 /* MoveHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveHistoryView.swift; sourceTree = "<group>"; };
+		25585FC32571AD96004FF559 /* BishopTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BishopTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +140,7 @@
 				250B996C256F223D00AAD4B2 /* Info.plist */,
 				250B997C256F470F00AAD4B2 /* RookTests.swift */,
 				250B9987256F6ECE00AAD4B2 /* KnightTests.swift */,
+				25585FC32571AD96004FF559 /* BishopTests.swift */,
 			);
 			path = ChessTests;
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25585FC42571AD96004FF559 /* BishopTests.swift in Sources */,
 				250B997D256F470F00AAD4B2 /* RookTests.swift in Sources */,
 				250B9979256F387B00AAD4B2 /* PawnTests.swift in Sources */,
 				250B9975256F28E400AAD4B2 /* PieceTests.swift in Sources */,

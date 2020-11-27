@@ -23,213 +23,15 @@ class Chess: ObservableObject {
         self.board = board
         self.history = history
     }
-
-    func isValidMove(_ move: Move) -> Result<Void, MoveError> {
+    
+    @discardableResult
+    func apply(_ move: Move) -> Result<Void, MoveError> {
+        // You can't move if its not your turn
         guard turn == move.piece.color else {
             return .failure(.wrongTurn)
         }
         
-        guard move.piece.location != move.destination else {
-            return .failure(.moveToSameLocation)
-        }
-        
-        guard board.contains(move.piece) else {
-            return .failure(.noPieceAtLocation)
-        }
-        
-        guard !Set(board.filter {
-                $0.color == move.piece.color
-            }.map(\.location))
-            .contains(move.destination) else {
-            return .failure(.noCaptureOwnPiece)
-        }
-        
-        switch move.piece.kind {
-        case .king:
-            return isValidMoveKing(move)
-        case .queen:
-            return isValidMoveQueen(move)
-        case .bishop:
-            return isValidMoveBishop(move)
-        case .knight:
-            return isValidMoveKnight(move)
-        case .rook:
-            return isValidMoveRook(move)
-        case .pawn:
-            return isValidMovePawn(move)
-        }
-    }
-    
-    private func isValidMoveKing(_ move: Move) -> Result<Void, MoveError> {
-        if abs(move.destination.rank - move.piece.location.rank) <= 1 &&
-            abs(move.destination.file - move.piece.location.file) <= 1 {
-            return .success(())
-        }
-        return .failure(.invalidMove)
-    }
-    
-    private func isValidMoveQueen(_ move: Move) -> Result<Void, MoveError> {
-        // A queen is just a combination of a Rook & Bishop
-        // so we can re-use their validation
-        let result1 = isValidMoveRook(move)
-        if case .success = result1 {
-            return result1
-        }
-        let result2 = isValidMoveBishop(move)
-        if case .success = result2 {
-            return result2
-        }
-        
-        return .failure(.invalidMove)
-    }
-    
-    private func isValidMoveBishop(_ move: Move) -> Result<Void, MoveError> {
-        let sourceRank = move.piece.location.rank
-        let sourceFile = move.piece.location.file
-        let destRank = move.destination.rank
-        let destFile = move.destination.file
-        
-        // Bishops can only move along a diagonal
-        guard abs(sourceRank - destRank) == abs(sourceFile - destFile) else {
-            return .failure(.invalidMove)
-        }
-        
-        let minFile = min(sourceFile, destFile) + 1
-        let maxFile = max(sourceFile, destFile)
-        let fileSpan = sourceFile < destFile ?
-            AnyCollection((minFile..<maxFile)) :
-            AnyCollection((minFile..<maxFile).reversed())
-        
-        let minRank = min(sourceRank, destRank) + 1
-        let maxRank = max(sourceRank, destRank)
-        let rankSpan = sourceRank < destRank ?
-            AnyCollection((minRank..<maxRank)) :
-            AnyCollection((minRank..<maxRank).reversed())
-        
-        // Validate that there aren't any pieces blocking the movement.
-        // Generate the span betwen the source & destination & validate no pieces are in between.
-        guard Set(zip(fileSpan, rankSpan).map {
-            BoardLocation(file: $0, rank: $1)
-        }).intersection(board.map(\.location)).isEmpty else {
-            return .failure(.invalidMove)
-        }
-        
-        return .success(())
-    }
-    
-    private func isValidMoveKnight(_ move: Move) -> Result<Void, MoveError>  {
-        let source = move.piece.location
-        let isValid = [
-            (source.file + 1, source.rank + 2),
-            (source.file + 2, source.rank + 1),
-            (source.file - 1, source.rank + 2),
-            (source.file + 2, source.rank - 1),
-            (source.file + 1, source.rank - 2),
-            (source.file - 2, source.rank + 1),
-            (source.file - 1, source.rank - 2),
-            (source.file - 2, source.rank - 1),
-        ].filter { (1...8).contains($0.0) && (1...8).contains($0.1) }
-        .map {
-            BoardLocation(file: $0.0, rank: $0.1)
-        }.contains(move.destination)
-        
-        if isValid {
-            return .success(())
-        }
-        
-        return .failure(.invalidMove)
-    }
-    
-    private func isValidMoveRook(_ move: Move) -> Result<Void, MoveError> {
-        let sourceRank = move.piece.location.rank
-        let sourceFile = move.piece.location.file
-        let destRank = move.destination.rank
-        let destFile = move.destination.file
-        // Rooks can only move along their current rank & file
-        guard sourceRank == destRank || sourceFile == destFile else {
-            return .failure(.invalidMove)
-        }
-        
-        // Validate that there aren't any pieces blocking the movement.
-        // Generate the span betwen the source & destination & validate no pieces are in between.
-        // Note the `..<` on the range operator to make sure we don't
-        // accidentally check the destination, which might be a capture
-        if sourceRank == destRank {
-            let minFile = min(sourceFile, destFile)
-            let maxFile = max(sourceFile, destFile)
-            let span = (minFile..<maxFile).map {
-                BoardLocation(file: $0, rank: sourceRank)
-            }
-            if Set(board.map(\.location)).intersection(span).count == 1 {
-                return .success(())
-            }
-        } else {
-            let minRank = min(sourceRank, destRank)
-            let maxRank = max(sourceRank, destRank)
-            let span = (minRank..<maxRank).map {
-                BoardLocation(file: sourceFile, rank: $0)
-            }
-            if Set(board.map(\.location)).intersection(span).count == 1 {
-                return .success(())
-            }
-        }
-        
-        return .failure(.invalidMove)
-    }
-    
-    private func isValidMovePawn(_ move: Move) -> Result<Void, MoveError> {
-        let sourceRank = move.piece.location.rank
-        let sourceFile = move.piece.location.file
-        let destRank = move.destination.rank
-        let destFile = move.destination.file
-        if move.piece.color == .white {
-            // Standard pawn move
-            if sourceFile == destFile &&
-                sourceRank == destRank - 1 &&
-                !board.map(\.location).contains(move.destination) {
-                return .success(())
-            }
-            // Pawn opening double move
-            else if sourceRank == 2 &&
-                sourceFile == destFile &&
-                sourceRank == destRank - 2 {
-                return .success(())
-            }
-            // Pawn Capture
-            else if (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
-                sourceRank == destRank - 1 &&
-                board.map(\.location).contains(move.destination) {
-                return .success(())
-            }
-            // invalid move
-            return .failure(.invalidMove)
-        } else {
-            // Standard pawn move
-            if sourceFile == destFile &&
-                sourceRank == destRank + 1 &&
-                !board.map(\.location).contains(move.destination) {
-                return .success(())
-            }
-            // Pawn opening double move
-            else if sourceRank == 7  &&
-                sourceFile == destFile &&
-                sourceRank == destRank + 2 {
-                return .success(())
-            }
-            // Pawn Capture
-            else if (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
-                sourceRank == destRank + 1 &&
-                board.map(\.location).contains(move.destination) {
-                return .success(())
-            }
-            // invalid move
-            return .failure(.invalidMove)
-        }
-    }
-    
-    @discardableResult
-    func apply(_ move: Move) -> Result<Void, MoveError> {
-        let result = isValidMove(move)
+        let result = Self.isValidMove(board: board, move: move)
         guard case .success = result else {
             return result
         }
@@ -271,6 +73,223 @@ extension Chess {
     
     func piece(rank: Int, file: Int) -> Piece? {
         return piece(for: BoardLocation(file: file, rank: rank))
+    }
+}
+
+// MARK: Move Validation
+
+extension Chess {
+    static func isValidMove(board: [Piece], move: Move) -> Result<Void, MoveError> {
+        // You can't move to the same spot.
+        guard move.piece.location != move.destination else {
+            return .failure(.moveToSameLocation)
+        }
+        
+        // You can't move a piece that doesn't exist
+        guard board.contains(move.piece) else {
+            return .failure(.noPieceAtLocation)
+        }
+        
+        // You can't capture your own piece
+        guard !Set(board.filter {
+                $0.color == move.piece.color
+            }.map(\.location))
+            .contains(move.destination) else {
+            return .failure(.noCaptureOwnPiece)
+        }
+        
+        switch move.piece.kind {
+        case .king:
+            return Self.isValidMoveKing(board: board, move: move)
+        case .queen:
+            return Self.isValidMoveQueen(board: board, move: move)
+        case .bishop:
+            return Self.isValidMoveBishop(board: board, move: move)
+        case .knight:
+            return Self.isValidMoveKnight(board: board, move: move)
+        case .rook:
+            return Self.isValidMoveRook(board: board, move: move)
+        case .pawn:
+            return Self.isValidMovePawn(board: board, move: move)
+        }
+    }
+    
+    static func isValidMoveKing(board: [Piece], move: Move) -> Result<Void, MoveError> {
+        if abs(move.destination.rank - move.piece.location.rank) <= 1 &&
+            abs(move.destination.file - move.piece.location.file) <= 1 {
+            return .success(())
+        }
+        return .failure(.invalidMove)
+    }
+    
+    static func isValidMoveQueen(board: [Piece], move: Move) -> Result<Void, MoveError> {
+        // A queen is just a combination of a Rook & Bishop
+        // so we can re-use their validation rules :-)
+        let result1 = isValidMoveRook(board: board, move: move)
+        if case .success = result1 {
+            return result1
+        }
+        let result2 = isValidMoveBishop(board: board, move: move)
+        if case .success = result2 {
+            return result2
+        }
+        
+        return .failure(.invalidMove)
+    }
+    
+    static func isValidMoveBishop(board: [Piece], move: Move) -> Result<Void, MoveError> {
+        let sourceRank = move.piece.location.rank
+        let sourceFile = move.piece.location.file
+        let destRank = move.destination.rank
+        let destFile = move.destination.file
+        
+        // Bishops can only move along a diagonal
+        guard abs(sourceRank - destRank) == abs(sourceFile - destFile) else {
+            return .failure(.invalidMove)
+        }
+        
+        let minFile = min(sourceFile, destFile) + 1 //no freakin idea why a +1 needs to be here...
+        let maxFile = max(sourceFile, destFile)
+        let fileSpan = sourceFile < destFile ?
+            AnyCollection((minFile..<maxFile)) :
+            AnyCollection((minFile..<maxFile).reversed())
+        
+        let minRank = min(sourceRank, destRank) + 1
+        let maxRank = max(sourceRank, destRank)
+        let rankSpan = sourceRank < destRank ?
+            AnyCollection((minRank..<maxRank)) :
+            AnyCollection((minRank..<maxRank).reversed())
+        
+        // Validate that there aren't any pieces blocking the movement.
+        // Generate the span betwen the source & destination, then validate
+        // no pieces are in between.
+        guard Set(zip(fileSpan, rankSpan).map {
+            BoardLocation(file: $0, rank: $1)
+        }).intersection(board.map(\.location)).isEmpty else {
+            return .failure(.invalidMove)
+        }
+        
+        return .success(())
+    }
+    
+    static func isValidMoveKnight(board: [Piece], move: Move) -> Result<Void, MoveError>  {
+        let source = move.piece.location
+        let isValid = [
+            (source.file + 1, source.rank + 2),
+            (source.file + 2, source.rank + 1),
+            (source.file - 1, source.rank + 2),
+            (source.file + 2, source.rank - 1),
+            (source.file + 1, source.rank - 2),
+            (source.file - 2, source.rank + 1),
+            (source.file - 1, source.rank - 2),
+            (source.file - 2, source.rank - 1),
+        ].filter { (1...8).contains($0.0) && (1...8).contains($0.1) }
+        .map {
+            BoardLocation(file: $0.0, rank: $0.1)
+        }.contains(move.destination)
+        
+        if isValid {
+            return .success(())
+        }
+        
+        return .failure(.invalidMove)
+    }
+    
+    static func isValidMoveRook(board: [Piece], move: Move) -> Result<Void, MoveError> {
+        let sourceRank = move.piece.location.rank
+        let sourceFile = move.piece.location.file
+        let destRank = move.destination.rank
+        let destFile = move.destination.file
+        // Rooks can only move along their current rank & file
+        guard sourceRank == destRank || sourceFile == destFile else {
+            return .failure(.invalidMove)
+        }
+        
+        // Validate that there aren't any pieces blocking the movement.
+        // Generate the span betwen the source & destination & validate no pieces are in between.
+        // Note the `..<` on the range operator to make sure we don't
+        // accidentally check the destination, which might be a capture
+        if sourceRank == destRank {
+            let minFile = min(sourceFile, destFile)
+            let maxFile = max(sourceFile, destFile)
+            let span = (minFile..<maxFile).map {
+                BoardLocation(file: $0, rank: sourceRank)
+            }
+            if Set(board.map(\.location)).intersection(span).count == 1 {
+                return .success(())
+            }
+        } else {
+            let minRank = min(sourceRank, destRank)
+            let maxRank = max(sourceRank, destRank)
+            let span = (minRank..<maxRank).map {
+                BoardLocation(file: sourceFile, rank: $0)
+            }
+            if Set(board.map(\.location)).intersection(span).count == 1 {
+                return .success(())
+            }
+        }
+        
+        return .failure(.invalidMove)
+    }
+    
+    static func isValidMovePawn(board: [Piece], move: Move) -> Result<Void, MoveError> {
+        let sourceRank = move.piece.location.rank
+        let sourceFile = move.piece.location.file
+        let destRank = move.destination.rank
+        let destFile = move.destination.file
+        if move.piece.color == .white {
+            // Standard pawn move
+            if sourceFile == destFile &&
+                sourceRank == destRank - 1 &&
+                !board.map(\.location).contains(move.destination) {
+                return .success(())
+            }
+            // Pawn opening double move
+            else if sourceRank == 2 &&
+                sourceFile == destFile &&
+                sourceRank == destRank - 2 {
+                return .success(())
+            }
+            // Pawn Capture
+            else if (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
+                sourceRank == destRank - 1 &&
+                board.map(\.location).contains(move.destination) {
+                return .success(())
+            }
+            //TODO: en passant
+            // invalid move
+            return .failure(.invalidMove)
+        } else {
+            // Standard pawn move
+            if sourceFile == destFile &&
+                sourceRank == destRank + 1 &&
+                !board.map(\.location).contains(move.destination) {
+                return .success(())
+            }
+            // Pawn opening double move
+            else if sourceRank == 7  &&
+                sourceFile == destFile &&
+                sourceRank == destRank + 2 {
+                return .success(())
+            }
+            // Pawn Capture
+            else if (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
+                sourceRank == destRank + 1 &&
+                board.map(\.location).contains(move.destination) {
+                return .success(())
+            }
+            //TODO: en passant
+            // invalid move
+            return .failure(.invalidMove)
+        }
+    }
+}
+
+extension Chess {
+    func isThreatened(piece: Piece) -> Bool {
+//        let color = piece.color
+//        let opponentsPieces
+        false
     }
 }
 
