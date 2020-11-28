@@ -13,6 +13,7 @@ class Chess: ObservableObject {
     @Published var turn: Color
     @Published var board: [Piece]
     @Published var history: [Move]
+    @Published var inCheck: Color?
     
     init(
         turn: Color = .white,
@@ -50,6 +51,9 @@ class Chess: ObservableObject {
                 "move": move.description
             ])
         }
+        self.inCheck = board.first(where: {
+            $0.kind == .king && Self.isThreatened(piece: $0, board: board)}
+        )?.color
         turn = turn == .white ? .black : .white
         return result
     }
@@ -98,43 +102,51 @@ extension Chess {
             return .failure(.noCaptureOwnPiece)
         }
         
-        // If a move would place your own king in check, its not a valid move
-        let isOwnKingThreatened = board
-            .first(where: { $0.kind == .king && $0.color == turn })
-            .flatMap {
-                var newBoardState = board
-                // If move is a capture, remove old piece
-                if let capturedIndex = board.firstIndex(where: { $0.location == move.destination }) {
-                    newBoardState.remove(at: capturedIndex)
-                }
-                // Replace existing piece with the one that just moved
-                if let index = newBoardState.firstIndex(of: move.piece) {
-                    newBoardState[index] = Piece(
-                        kind: move.piece.kind,
-                        color: move.piece.color,
-                        location: move.destination
-                    )
-                }
-                return isThreatened(piece: $0, board: newBoardState)
-            } ?? false
-        guard !isOwnKingThreatened else {
+        let pieceValidation: Result<Void, MoveError>
+        switch move.piece.kind {
+        case .king:
+            pieceValidation = Self.isValidMoveKing(board: board, move: move)
+        case .queen:
+            pieceValidation = Self.isValidMoveQueen(board: board, move: move)
+        case .bishop:
+            pieceValidation = Self.isValidMoveBishop(board: board, move: move)
+        case .knight:
+            pieceValidation = Self.isValidMoveKnight(board: board, move: move)
+        case .rook:
+            pieceValidation = Self.isValidMoveRook(board: board, move: move)
+        case .pawn:
+            pieceValidation = Self.isValidMovePawn(board: board, move: move)
+        }
+        
+        guard case .success = pieceValidation else {
+            return pieceValidation
+        }
+        
+        // If a move would place your own king in check its not a valid move
+        // Try and apply the new move,
+        let isOwnKingThreatened: Bool = {
+            var newBoardState = board
+            if let capturedIndex = board.firstIndex(where: { $0.location == move.destination }) {
+                newBoardState.remove(at: capturedIndex)
+            }
+            if let index = newBoardState.firstIndex(of: move.piece) {
+                newBoardState[index] = Piece(
+                    kind: move.piece.kind,
+                    color: move.piece.color,
+                    location: move.destination
+                )
+            }
+            // find the king's location on the new board
+            guard let newKingLocation = newBoardState.first(where: { $0.kind == .king && $0.color == turn }) else {
+                return false
+            }
+            return isThreatened(piece: newKingLocation, board: newBoardState)
+        }()
+        if isOwnKingThreatened {
             return .failure(.placesKingInCheck)
         }
         
-        switch move.piece.kind {
-        case .king:
-            return Self.isValidMoveKing(board: board, move: move)
-        case .queen:
-            return Self.isValidMoveQueen(board: board, move: move)
-        case .bishop:
-            return Self.isValidMoveBishop(board: board, move: move)
-        case .knight:
-            return Self.isValidMoveKnight(board: board, move: move)
-        case .rook:
-            return Self.isValidMoveRook(board: board, move: move)
-        case .pawn:
-            return Self.isValidMovePawn(board: board, move: move)
-        }
+        return .success(())
     }
     
     static func isValidMoveKing(board: [Piece], move: Move) -> Result<Void, MoveError> {
@@ -142,6 +154,9 @@ extension Chess {
             abs(move.destination.file - move.piece.location.file) <= 1 {
             return .success(())
         }
+        
+        //TODO: handle castling
+        
         return .failure(.invalidMove)
     }
     

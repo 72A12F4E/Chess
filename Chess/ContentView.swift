@@ -18,9 +18,11 @@ struct ContentView: View {
                 .font(.largeTitle)
             ChessBoardView()
                 .padding()
+            if let check = chess.inCheck {
+                Text("\(check.description) is in check")
+            }
             MoveHistoryView()
                 .padding()
-            
         }
     }
 }
