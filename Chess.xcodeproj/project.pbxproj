@@ -24,6 +24,7 @@
 		250B9988256F6ECE00AAD4B2 /* KnightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B9987256F6ECE00AAD4B2 /* KnightTests.swift */; };
 		250B998C256F7B8300AAD4B2 /* MoveHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B998B256F7B8300AAD4B2 /* MoveHistoryView.swift */; };
 		25585FC42571AD96004FF559 /* BishopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25585FC32571AD96004FF559 /* BishopTests.swift */; };
+		25585FC82571D9EF004FF559 /* Chess+MoveValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25585FC72571D9EF004FF559 /* Chess+MoveValidation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		250B9987256F6ECE00AAD4B2 /* KnightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnightTests.swift; sourceTree = "<group>"; };
 		250B998B256F7B8300AAD4B2 /* MoveHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveHistoryView.swift; sourceTree = "<group>"; };
 		25585FC32571AD96004FF559 /* BishopTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BishopTests.swift; sourceTree = "<group>"; };
+		25585FC72571D9EF004FF559 /* Chess+MoveValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chess+MoveValidation.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				250B9955256F219A00AAD4B2 /* Chess.swift */,
+				25585FC72571D9EF004FF559 /* Chess+MoveValidation.swift */,
 				250B9958256F21A900AAD4B2 /* Color.swift */,
 				250B995B256F21C400AAD4B2 /* BoardLocation.swift */,
 				250B995E256F21E900AAD4B2 /* Piece.swift */,
@@ -252,6 +255,7 @@
 				250B9944256F216000AAD4B2 /* ContentView.swift in Sources */,
 				250B995C256F21C400AAD4B2 /* BoardLocation.swift in Sources */,
 				250B9942256F216000AAD4B2 /* ChessApp.swift in Sources */,
+				25585FC82571D9EF004FF559 /* Chess+MoveValidation.swift in Sources */,
 				250B998C256F7B8300AAD4B2 /* MoveHistoryView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -49,35 +49,43 @@ struct ChessBoardView: View {
                 .foregroundColor(color(rank: rank, file: file))
                 .border(SwiftUI.Color.black, width: 1)
                 .onTapGesture {
-                    if let selected = selectedSquare, let piece = chess.piece(rank: selected.rank, file: selected.file) {
-                        do {
-                            try chess.apply(Move(piece: piece, destination: location))
-                        } catch {
-                            self.error = error
-                            isShowingError = true
-                        }
-                        selectedSquare = nil
-                    }
+                    onSquareTapped(location)
                 }
             if let piece = chess.piece(rank: rank, file: file) {
                 piece.image
                     .resizable()
                     .onTapGesture {
-                        if let selected = selectedSquare, let piece = chess.piece(for: selected) {
-                            do {
-                                try chess.apply(Move(piece: piece, destination: location))
-                            } catch {
-                                self.error = error
-                                isShowingError = true
-                            }
-                        } else if chess.turn == piece.color {
-                            self.selectedSquare = location
-                        }
+                        onPieceTapped(piece, location: location)
                     }
             } else {
                 Text(location.description)
                     .font(.footnote)
             }
+        }
+    }
+    
+    private func onSquareTapped(_ location: BoardLocation) {
+        if let selected = selectedSquare, let piece = chess.piece(rank: selected.rank, file: selected.file) {
+            do {
+                try chess.apply(Move(piece: piece, destination: location))
+            } catch {
+                self.error = error
+                isShowingError = true
+            }
+            selectedSquare = nil
+        }
+    }
+    
+    private func onPieceTapped(_ piece: Piece, location: BoardLocation) {
+        if let selected = selectedSquare, let piece = chess.piece(for: selected) {
+            do {
+                try chess.apply(Move(piece: piece, destination: location))
+            } catch {
+                self.error = error
+                isShowingError = true
+            }
+        } else if chess.turn == piece.color {
+            self.selectedSquare = location
         }
     }
     
