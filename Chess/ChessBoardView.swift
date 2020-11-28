@@ -32,12 +32,12 @@ struct ChessBoardView: View {
         }
         .border(SwiftUI.Color.black, width: 2)
         .aspectRatio(1.0, contentMode: .fit)
-        .alert(isPresented: $isShowingError) {
-            Alert(
-                title: Text("Error"),
-                message: Text(error?.localizedDescription ?? "")
-            )
-        }
+//        .alert(isPresented: $isShowingError) {
+//            Alert(
+//                title: Text("Error"),
+//                message: Text(error?.localizedDescription ?? "")
+//            )
+//        }
     }
     
     
