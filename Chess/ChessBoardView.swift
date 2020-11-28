@@ -51,15 +51,15 @@ struct ChessBoardView: View {
                 .onTapGesture {
                     onSquareTapped(location)
                 }
+            Text(location.description)
+                .font(.system(size: 10))
+                
             if let piece = chess.piece(for: location) {
                 piece.image
                     .resizable()
                     .onTapGesture {
                         onPieceTapped(piece, location: location)
                     }
-            } else {
-                Text(location.description)
-                    .font(.footnote)
             }
         }
     }
@@ -77,6 +77,10 @@ struct ChessBoardView: View {
     }
     
     private func onPieceTapped(_ piece: Piece, location: BoardLocation) {
+        guard selectedSquare != location else {
+            selectedSquare = nil
+            return
+        }
         if let selected = selectedSquare, let piece = chess.piece(for: selected) {
             do {
                 try chess.apply(Move(piece: piece, destination: location))
@@ -87,10 +91,6 @@ struct ChessBoardView: View {
         } else if chess.turn == piece.color {
             self.selectedSquare = location
         }
-    }
-    
-    private func convert(point: CGPoint) -> BoardLocation? {
-        BoardLocation(file: 0, rank: 0) //TODO: Fixme for drag & drop interaction
     }
     
     private func color(rank: Int, file: Int) -> SwiftUI.Color {

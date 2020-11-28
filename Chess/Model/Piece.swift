@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Piece: Equatable {
+struct Piece: Identifiable, Equatable {
     enum Kind: String {
         case king
         case queen
@@ -16,9 +16,28 @@ struct Piece: Equatable {
         case rook
         case pawn
     }
-    let kind: Kind
+    let id: UUID
+    private(set) var kind: Kind
     let color: Color
-    let location: BoardLocation
+    private(set) var location: BoardLocation
+    
+    init(kind: Kind, color: Color, location: BoardLocation) {
+        self.id = UUID()
+        self.kind = kind
+        self.color = color
+        self.location = location
+    }
+}
+
+extension Piece {
+    mutating func move(to location: BoardLocation) {
+        self.location = location
+    }
+    
+    mutating func promote(to kind: Kind) {
+        guard kind != .king || kind == .pawn else { return }
+        self.kind = kind
+    }
 }
 
 extension Piece: CustomStringConvertible {

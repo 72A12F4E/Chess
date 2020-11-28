@@ -35,11 +35,7 @@ class Chess: ObservableObject {
         }
         // Replace existing piece with the one that just moved
         if let index = board.firstIndex(of: move.piece) {
-            board[index] = Piece(
-                kind: move.piece.kind,
-                color: move.piece.color,
-                location: move.destination
-            )
+            board[index].move(to: move.destination)
             
             // Castling
             if move.isCastle {
@@ -55,11 +51,7 @@ class Chess: ObservableObject {
                     }
                 }()
                 if let rookIndex = board.firstIndex(where: { rookMove.from == $0.location }) {
-                    board[rookIndex] = Piece(
-                        kind: .rook,
-                        color: move.piece.color,
-                        location: rookMove.to
-                    )
+                    board[rookIndex].move(to: rookMove.to)
                 } else {
                     panic([
                         "message": "Castling failed!",

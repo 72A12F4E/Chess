@@ -29,30 +29,37 @@ class PawnTests: XCTestCase {
     }
     
     func testPawnRegularMove() throws {
+        let pawn1 = Piece(kind: .pawn, color: .white, location: .e2)
+        let pawn2 = Piece(kind: .pawn, color: .black, location: .e7)
+        let board = [pawn1, pawn2]
         try [
-            Move(piece: Piece(kind: .pawn, color: .white, location: .e2), destination: .e3),
-            Move(piece: Piece(kind: .pawn, color: .black, location: .e7), destination: .e6),
+            Move(piece: pawn1, destination: .e3),
+            Move(piece: pawn2, destination: .e6),
         ].forEach {
-            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0, turn: $0.piece.color, history: []))
+            XCTAssertNoThrow(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color, history: []))
         }
     }
     
     func testPawnOpeningMove() throws {
+        let pawn1 = Piece(kind: .pawn, color: .white, location: .e2)
+        let pawn2 = Piece(kind: .pawn, color: .black, location: .e7)
+        let board = [pawn1, pawn2]
         try [
-            Move(piece: Piece(kind: .pawn, color: .white, location: .e2), destination: .e4),
-            Move(piece: Piece(kind: .pawn, color: .black, location: .e7), destination: .e5),
+            Move(piece: pawn1, destination: .e4),
+            Move(piece: pawn2, destination: .e5),
         ].forEach {
-            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0, turn: $0.piece.color, history: []))
+            XCTAssertNoThrow(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color, history: []))
         }
     }
     
     func testWhitePawnCapture() throws {
+        let pawn = Piece(kind: .pawn, color: .white, location: .d4)
         let board = [
-            Piece(kind: .pawn, color: .white, location: .d4),
+            pawn,
             Piece(kind: .pawn, color: .black, location: .e5)
         ]
         try [
-            Move(piece: Piece(kind: .pawn, color: .white, location: .d4), destination: .e5)
+            Move(piece: pawn, destination: .e5)
         ].forEach {
             XCTAssertNoThrow(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color, history: []))
         }
@@ -71,12 +78,13 @@ class PawnTests: XCTestCase {
     }
     
     func testBlackPawnCapture() throws {
+        let pawn = Piece(kind: .pawn, color: .black, location: .e5)
         let board = [
             Piece(kind: .pawn, color: .white, location: .d4),
-            Piece(kind: .pawn, color: .black, location: .e5)
+            pawn
         ]
         try [
-            Move(piece: Piece(kind: .pawn, color: .black, location: .e5), destination: .d4)
+            Move(piece: pawn, destination: .d4)
         ].forEach {
             XCTAssertNoThrow(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color, history: []))
         }
