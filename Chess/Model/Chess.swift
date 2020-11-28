@@ -40,6 +40,34 @@ class Chess: ObservableObject {
                 color: move.piece.color,
                 location: move.destination
             )
+            
+            // Castling
+            if move.isCastle {
+                let rookMove: (from: BoardLocation, to: BoardLocation) = {
+                    if move.destination == .g1 {
+                        return (.h1, .f1)
+                    } else if move.destination == .c1 {
+                        return (.a1, .d1)
+                    } else if move.destination == .g8 {
+                        return (.h8, .f8)
+                    } else {
+                        return (.a8, .d8)
+                    }
+                }()
+                if let rookIndex = board.firstIndex(where: { rookMove.from == $0.location }) {
+                    board[rookIndex] = Piece(
+                        kind: .rook,
+                        color: move.piece.color,
+                        location: rookMove.to
+                    )
+                } else {
+                    panic([
+                        "message": "Castling failed!",
+                        "board": boardView,
+                        "move": move.description
+                    ])
+                }
+            }
         } else {
             panic([
                 "message": "attempted to replace moved piece and failed",

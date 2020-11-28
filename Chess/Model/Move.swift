@@ -14,11 +14,18 @@ struct Move {
 
 extension Move: CustomStringConvertible {
     var description: String {
-        if piece.kind == .king &&
-            abs(destination.file - piece.location.file) == 2 {
+        if isCastle {
             return destination.file > piece.location.file ? "0-0" : "0-0-0"
         }
         return "\(piece.description) \(piece.location.description) \(destination.description)"
+    }
+}
+
+extension Move {
+    var isCastle: Bool {
+        piece.kind == .king &&
+            (piece.color == .white && [.c1, .g1].contains(destination) ||
+            piece.color == .black && [.c8, .g8].contains(destination))
     }
 }
 

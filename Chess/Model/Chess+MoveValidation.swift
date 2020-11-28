@@ -86,8 +86,7 @@ extension Chess {
             return
         }
     
-        guard move.piece.color == .white && [.c1, .g1].contains(move.destination) ||
-            [.c8, .g8].contains(move.destination) else {
+        guard move.isCastle else {
             throw MoveError.invalidMove
         }
         
@@ -103,7 +102,7 @@ extension Chess {
         let isKingSide = move.destination.file == 7
         
         let isKingMoved = history.contains {
-            $0.piece.kind == move.piece.kind && $0.piece.color == .white
+            $0.piece.kind == .king && $0.piece.color == color
         }
         
         let isRookMoved = history.contains {
@@ -140,7 +139,7 @@ extension Chess {
         }()
 
         let isUnderThreat = threatenedLocations.allSatisfy {
-            !isThreatened(location: $0, by: color == .white ? .black : .white, board: board)
+            isThreatened(location: $0, by: color == .white ? .black : .white, board: board)
         }
         
         guard !isKingMoved && !isRookMoved && isOpen && !isUnderThreat else {
@@ -232,7 +231,7 @@ extension Chess {
             let span = (minFile..<maxFile).map {
                 BoardLocation(file: $0, rank: sourceRank)
             }
-            if Set(board.map(\.location)).intersection(span).count == 1 {
+            if Set(board.map(\.location)).intersection(span).count <= 1 {
                 return
             }
         } else {
@@ -241,7 +240,7 @@ extension Chess {
             let span = (minRank..<maxRank).map {
                 BoardLocation(file: sourceFile, rank: $0)
             }
-            if Set(board.map(\.location)).intersection(span).count == 1 {
+            if Set(board.map(\.location)).intersection(span).count <= 1 {
                 return
             }
         }

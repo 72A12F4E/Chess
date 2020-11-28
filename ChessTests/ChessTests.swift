@@ -23,9 +23,4 @@ class ChessTests: XCTestCase {
         boardView += "♜♞♝♛♚♝♞♜"
         XCTAssertEqual(chess.boardView, boardView)
     }
-    
-    func testBoardViewIsDebugDescription() throws {
-        let chess = Chess()
-        XCTAssertEqual(chess.boardView, chess.debugDescription)
-    }
 }
