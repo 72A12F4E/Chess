@@ -20,6 +20,13 @@ struct ChessBoardView: View {
     @State
     var isShowingError: Bool = false
     
+    // Promotion Interaction
+    @State
+    var isShowingPromotionPrompt: Bool = false
+    
+    @State
+    var promotionMove: Move?
+    
     var body: some View {
         HStack(spacing: 0) {
             ForEach(1..<9) { file in
@@ -36,6 +43,34 @@ struct ChessBoardView: View {
             Alert(
                 title: Text("Error"),
                 message: Text(error?.localizedDescription ?? "")
+            )
+        }
+        .actionSheet(isPresented: $isShowingPromotionPrompt) {
+            ActionSheet(
+                title: Text("Congratulations!"),
+                message: Text("Pick your new piece"),
+                buttons: [
+                    .default(Text("Rook")) {
+                        guard var move = promotionMove else { return }
+                        move.promotionChoice = .rook
+                        performMove(move)
+                    },
+                    .default(Text("Bishop")) {
+                        guard var move = promotionMove else { return }
+                        move.promotionChoice = .bishop
+                        performMove(move)
+                    },
+                    .default(Text("Knight")) {
+                        guard var move = promotionMove else { return }
+                        move.promotionChoice = .knight
+                        performMove(move)
+                    },
+                    .default(Text("Queen")) {
+                        guard var move = promotionMove else { return }
+                        move.promotionChoice = .queen
+                        performMove(move)
+                    },
+                ]
             )
         }
     }
@@ -66,13 +101,8 @@ struct ChessBoardView: View {
     
     private func onSquareTapped(_ location: BoardLocation) {
         if let selected = selectedSquare, let piece = chess.piece(for: selected) {
-            do {
-                try chess.apply(Move(piece: piece, destination: location))
-            } catch {
-                self.error = error
-                isShowingError = true
-            }
-            selectedSquare = nil
+            let move = Move(piece: piece, destination: location)
+            performMove(move)
         }
     }
     
@@ -82,14 +112,26 @@ struct ChessBoardView: View {
             return
         }
         if let selected = selectedSquare, let piece = chess.piece(for: selected) {
+            let move = Move(piece: piece, destination: location)
+            performMove(move)
+        } else if chess.turn == piece.color {
+            self.selectedSquare = location
+        }
+    }
+    
+    private func performMove(_ move: Move) {
+        if move.isPromotion && promotionMove == nil {
+            promotionMove = move
+            isShowingPromotionPrompt = true
+        } else {
+            promotionMove = nil
+            selectedSquare = nil
             do {
-                try chess.apply(Move(piece: piece, destination: location))
+                try chess.apply(move)
             } catch {
                 self.error = error
                 isShowingError = true
             }
-        } else if chess.turn == piece.color {
-            self.selectedSquare = location
         }
     }
     

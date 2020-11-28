@@ -10,6 +10,7 @@ import Foundation
 struct Move {
     let piece: Piece
     let destination: BoardLocation
+    var promotionChoice: Piece.Kind = .queen
 }
 
 extension Move: CustomStringConvertible {
@@ -26,6 +27,12 @@ extension Move {
         piece.kind == .king &&
             (piece.color == .white && [.c1, .g1].contains(destination) ||
             piece.color == .black && [.c8, .g8].contains(destination))
+    }
+    
+    var isPromotion: Bool {
+        piece.kind == .pawn &&
+            (piece.color == .white && destination.rank == 8 ||
+            piece.color == .black && destination.rank == 1)
     }
 }
 

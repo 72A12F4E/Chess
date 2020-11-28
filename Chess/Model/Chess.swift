@@ -35,10 +35,13 @@ class Chess: ObservableObject {
         }
         // Replace existing piece with the one that just moved
         if let index = board.firstIndex(of: move.piece) {
-            board[index].move(to: move.destination)
+            var piece = board[index]
+            piece.move(to: move.destination)
+            board[index] = piece
             
-            // Castling
-            if move.isCastle {
+            if move.isPromotion {
+                board[index].promote(to: move.promotionChoice)
+            } else if move.isCastle {
                 let rookMove: (from: BoardLocation, to: BoardLocation) = {
                     if move.destination == .g1 {
                         return (.h1, .f1)
