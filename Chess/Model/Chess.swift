@@ -64,10 +64,6 @@ extension Chess {
     func piece(for boardLocation: BoardLocation) -> Piece? {
         return board.first(where: { $0.location == boardLocation })
     }
-    
-    func piece(rank: Int, file: Int) -> Piece? {
-        return piece(for: BoardLocation(file: file, rank: rank))
-    }
 }
 
 // MARK: Debug Output

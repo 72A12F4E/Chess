@@ -51,7 +51,7 @@ struct ChessBoardView: View {
                 .onTapGesture {
                     onSquareTapped(location)
                 }
-            if let piece = chess.piece(rank: rank, file: file) {
+            if let piece = chess.piece(for: location) {
                 piece.image
                     .resizable()
                     .onTapGesture {
@@ -65,7 +65,7 @@ struct ChessBoardView: View {
     }
     
     private func onSquareTapped(_ location: BoardLocation) {
-        if let selected = selectedSquare, let piece = chess.piece(rank: selected.rank, file: selected.file) {
+        if let selected = selectedSquare, let piece = chess.piece(for: selected) {
             do {
                 try chess.apply(Move(piece: piece, destination: location))
             } catch {
