@@ -316,12 +316,13 @@ extension Chess {
 
 extension Chess {
     
-    /// Returns true if the given piece is attackable by an opponents piece.
+    /// Returns true if the given piece is attackable by an opponent's piece.
     static func isThreatened(piece: Piece, board: [Piece]) -> Bool {
         let opponent: Color = piece.color == .white ? .black : .white
         return isThreatened(location: piece.location, by: opponent, board: board)
     }
     
+    /// Returns true if the given location is attackable by an opponent's piece
     static func isThreatened(location: BoardLocation, by opponent: Color, board: [Piece]) -> Bool {
         let opponentsPieces = board.filter {
             $0.color == opponent
