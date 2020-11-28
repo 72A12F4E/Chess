@@ -16,11 +16,9 @@ class RookTests: XCTestCase {
             rook,
         ]
         let chess = Chess(turn: .white, board: board)
-        let move = chess.apply(
+        XCTAssertThrowsError(try chess.apply(
             Move(piece: rook, destination: .g3)
-        )
-        
-        XCTAssertThrowsError(try move.get())
+        ))
     }
     
     func testRookMoveRank() throws {
@@ -29,11 +27,9 @@ class RookTests: XCTestCase {
             rook,
         ]
         let chess = Chess(turn: .white, board: board)
-        let move = chess.apply(
+        XCTAssertNoThrow(try chess.apply(
             Move(piece: rook, destination: .h1)
-        )
-        
-        XCTAssertNoThrow(try move.get())
+        ))
     }
     
     func testRookMoveFile() throws {
@@ -42,11 +38,9 @@ class RookTests: XCTestCase {
             rook,
         ]
         let chess = Chess(turn: .white, board: board)
-        let move = chess.apply(
+        XCTAssertNoThrow(try chess.apply(
             Move(piece: rook, destination: .a8)
-        )
-        
-        XCTAssertNoThrow(try move.get())
+        ))
     }
     
     func testRookCaptureRank() throws {
@@ -57,11 +51,9 @@ class RookTests: XCTestCase {
             knight,
         ]
         let chess = Chess(turn: .white, board: board)
-        let move = chess.apply(
+        XCTAssertNoThrow(try chess.apply(
             Move(piece: rook, destination: .h1)
-        )
-        
-        XCTAssertNoThrow(try move.get())
+        ))
     }
     
     func testRookCaptureFile() throws {
@@ -72,11 +64,9 @@ class RookTests: XCTestCase {
             knight,
         ]
         let chess = Chess(turn: .white, board: board)
-        let move = chess.apply(
+        XCTAssertNoThrow(try chess.apply(
             Move(piece: rook, destination: .a8)
-        )
-        
-        XCTAssertNoThrow(try move.get())
+        ))
     }
     
     func testRookMoveRankBlocked() throws {
@@ -87,11 +77,9 @@ class RookTests: XCTestCase {
             queen
         ]
         let chess = Chess(turn: .white, board: board)
-        let move = chess.apply(
+        XCTAssertThrowsError(try chess.apply(
             Move(piece: rook, destination: .h1)
-        )
-        
-        XCTAssertThrowsError(try move.get())
+        ))
     }
     
     func testRookMoveFileBlocked() throws {
@@ -102,10 +90,8 @@ class RookTests: XCTestCase {
             queen
         ]
         let chess = Chess(turn: .white, board: board)
-        let move = chess.apply(
+        XCTAssertThrowsError(try chess.apply(
             Move(piece: rook, destination: .a8)
-        )
-        
-        XCTAssertThrowsError(try move.get())
+        ))
     }
 }

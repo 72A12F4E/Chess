@@ -51,7 +51,7 @@ struct ChessBoardView: View {
                 .onTapGesture {
                     if let selected = selectedSquare, let piece = chess.piece(rank: selected.rank, file: selected.file) {
                         do {
-                            try chess.apply(Move(piece: piece, destination: location)).get()
+                            try chess.apply(Move(piece: piece, destination: location))
                         } catch {
                             self.error = error
                             isShowingError = true
@@ -65,7 +65,7 @@ struct ChessBoardView: View {
                     .onTapGesture {
                         if let selected = selectedSquare, let piece = chess.piece(for: selected) {
                             do {
-                                try chess.apply(Move(piece: piece, destination: location)).get()
+                                try chess.apply(Move(piece: piece, destination: location))
                             } catch {
                                 self.error = error
                                 isShowingError = true
@@ -82,7 +82,7 @@ struct ChessBoardView: View {
     }
     
     private func convert(point: CGPoint) -> BoardLocation? {
-        BoardLocation(file: 0, rank: 0)
+        BoardLocation(file: 0, rank: 0) //TODO: Fixme for drag & drop interaction
     }
     
     private func color(rank: Int, file: Int) -> SwiftUI.Color {

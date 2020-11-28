@@ -17,16 +17,14 @@ class PawnTests: XCTestCase {
             whitePawn,
             blackPawn,
         ]
-        let result = Chess.isValidMove(
+        XCTAssertThrowsError(try Chess.isValidMove(
             board: board,
             move: Move(
                 piece: Piece(kind: .pawn, color: .white, location: .d4),
                 destination: .d6
             ),
             turn: .white
-        )
-        
-        XCTAssertThrowsError(try result.get())
+        ))
     }
     
     func testPawnRegularMove() throws {
@@ -34,7 +32,7 @@ class PawnTests: XCTestCase {
             Move(piece: Piece(kind: .pawn, color: .white, location: .e2), destination: .e3),
             Move(piece: Piece(kind: .pawn, color: .black, location: .e7), destination: .e6),
         ].forEach {
-            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0, turn: $0.piece.color).get())
+            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0, turn: $0.piece.color))
         }
     }
     
@@ -43,7 +41,7 @@ class PawnTests: XCTestCase {
             Move(piece: Piece(kind: .pawn, color: .white, location: .e2), destination: .e4),
             Move(piece: Piece(kind: .pawn, color: .black, location: .e7), destination: .e5),
         ].forEach {
-            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0, turn: $0.piece.color).get())
+            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0, turn: $0.piece.color))
         }
     }
     
@@ -55,7 +53,7 @@ class PawnTests: XCTestCase {
         try [
             Move(piece: Piece(kind: .pawn, color: .white, location: .d4), destination: .e5)
         ].forEach {
-            XCTAssertNoThrow(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color).get())
+            XCTAssertNoThrow(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color))
         }
     }
     
@@ -67,7 +65,7 @@ class PawnTests: XCTestCase {
         try [
             Move(piece: Piece(kind: .pawn, color: .white, location: .d4), destination: .e5)
         ].forEach {
-            XCTAssertThrowsError(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color).get())
+            XCTAssertThrowsError(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color))
         }
     }
     
@@ -79,7 +77,7 @@ class PawnTests: XCTestCase {
         try [
             Move(piece: Piece(kind: .pawn, color: .black, location: .e5), destination: .d4)
         ].forEach {
-            XCTAssertNoThrow(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color).get())
+            XCTAssertNoThrow(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color))
         }
     }
     
@@ -91,7 +89,7 @@ class PawnTests: XCTestCase {
         try [
             Move(piece: Piece(kind: .pawn, color: .black, location: .e5), destination: .d5)
         ].forEach {
-            XCTAssertThrowsError(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color).get())
+            XCTAssertThrowsError(try Chess.isValidMove(board: board, move: $0, turn: $0.piece.color))
         }
     }
 }
