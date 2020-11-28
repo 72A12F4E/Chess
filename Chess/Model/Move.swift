@@ -14,7 +14,11 @@ struct Move {
 
 extension Move: CustomStringConvertible {
     var description: String {
-        "\(piece.description) \(piece.location.description) \(destination.description)"
+        if piece.kind == .king &&
+            abs(destination.file - piece.location.file) == 2 {
+            return destination.file > piece.location.file ? "0-0" : "0-0-0"
+        }
+        return "\(piece.description) \(piece.location.description) \(destination.description)"
     }
 }
 

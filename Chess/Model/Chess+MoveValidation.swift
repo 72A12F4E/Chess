@@ -14,7 +14,7 @@ extension Chess {
     ///   - move: the move to perform
     ///   - turn: the current player's turn
     /// - Throws: `MoveError`
-    static func isValidMove(board: [Piece], move: Move, turn: Color) throws {
+    static func isValidMove(board: [Piece], move: Move, turn: Color, history: [Move]) throws {
         // You can't move if its not your turn
         guard turn == move.piece.color else {
             throw MoveError.wrongTurn
@@ -40,7 +40,7 @@ extension Chess {
         
         switch move.piece.kind {
         case .king:
-            try Self.isValidMoveKing(board: board, move: move)
+            try Self.isValidMoveKing(board: board, move: move, history: history)
         case .queen:
             try Self.isValidMoveQueen(board: board, move: move)
         case .bishop:
@@ -50,11 +50,11 @@ extension Chess {
         case .rook:
             try Self.isValidMoveRook(board: board, move: move)
         case .pawn:
-            try Self.isValidMovePawn(board: board, move: move)
+            try Self.isValidMovePawn(board: board, move: move, history: history)
         }
         
         // If a move would place your own king in check its not a valid move
-        // Try and apply the new move,
+        // Try and apply the new move and see if the king becomes threatened
         let isOwnKingThreatened: Bool = {
             var newBoardState = board
             if let capturedIndex = board.firstIndex(where: { $0.location == move.destination }) {
@@ -80,15 +80,72 @@ extension Chess {
         return
     }
     
-    static func isValidMoveKing(board: [Piece], move: Move) throws {
+    static func isValidMoveKing(board: [Piece], move: Move, history: [Move]) throws {
         if abs(move.destination.rank - move.piece.location.rank) <= 1 &&
             abs(move.destination.file - move.piece.location.file) <= 1 {
             return
         }
+    
+        guard move.piece.color == .white && [.c1, .g1].contains(move.destination) ||
+            [.c8, .g8].contains(move.destination) else {
+            throw MoveError.invalidMove
+        }
         
-        //TODO: handle castling
+        // https://en.wikipedia.org/wiki/Castling
+        //
+        // Castling may only be done if
+        //  * the king has never moved,
+        //  * the rook involved has never moved
+        //  * the squares between the king and the rook involved are unoccupied
+        //  * the king is not in check,
+        //  * the king does not cross over or end on a square attacked by an enemy piece.
+        let color = move.piece.color
+        let isKingSide = move.destination.file == 7
         
-        throw MoveError.invalidMove
+        let isKingMoved = history.contains {
+            $0.piece.kind == move.piece.kind && $0.piece.color == .white
+        }
+        
+        let isRookMoved = history.contains {
+            $0.piece.color == .white ?
+                $0.piece.kind == .rook &&
+                (isKingSide ? $0.piece.location == .h1 : $0.piece.location == .a1) :
+                $0.piece.kind == .rook &&
+                (isKingSide ? $0.piece.location == .h8 : $0.piece.location == .a8)
+        }
+        
+        let openLocations: [BoardLocation] = {
+            if isKingSide && color == .white {
+                return [.f1, .g1]
+            } else if color == .white {
+                return [.b1, .c1, .d1]
+            } else if isKingSide {
+                return [.f8, .g8]
+            } else {
+                return [.b8, .c8, .d8]
+            }
+        }()
+        let isOpen = Set(board.map(\.location)).intersection(openLocations).isEmpty
+        
+        let threatenedLocations: [BoardLocation] = {
+            if isKingSide && color == .white {
+                return [.f1, .g1, move.piece.location]
+            } else if color == .white {
+                return [.c1, .d1, move.piece.location]
+            } else if isKingSide {
+                return [.f8, .g8, move.piece.location]
+            } else {
+                return [.c8, .d8, move.piece.location]
+            }
+        }()
+
+        let isUnderThreat = threatenedLocations.allSatisfy {
+            !isThreatened(location: $0, by: color == .white ? .black : .white, board: board)
+        }
+        
+        guard !isKingMoved && !isRookMoved && isOpen && !isUnderThreat else {
+            throw MoveError.invalidMove
+        }
     }
     
     static func isValidMoveQueen(board: [Piece], move: Move) throws {
@@ -132,8 +189,6 @@ extension Chess {
         }).intersection(board.map(\.location)).isEmpty else {
             throw MoveError.invalidMove
         }
-        
-        return
     }
     
     static func isValidMoveKnight(board: [Piece], move: Move) throws  {
@@ -152,11 +207,9 @@ extension Chess {
             BoardLocation(file: $0.0, rank: $0.1)
         }.contains(move.destination)
         
-        if isValid {
-            return
+        guard isValid else {
+            throw MoveError.invalidMove
         }
-        
-        throw MoveError.invalidMove
     }
     
     static func isValidMoveRook(board: [Piece], move: Move) throws {
@@ -196,55 +249,67 @@ extension Chess {
         throw MoveError.invalidMove
     }
     
-    static func isValidMovePawn(board: [Piece], move: Move) throws {
+    static func isValidMovePawn(board: [Piece], move: Move, history: [Move]) throws {
         let sourceRank = move.piece.location.rank
         let sourceFile = move.piece.location.file
         let destRank = move.destination.rank
         let destFile = move.destination.file
         if move.piece.color == .white {
             // Standard pawn move
-            if sourceFile == destFile &&
+            let isStandardMove = sourceFile == destFile &&
                 sourceRank == destRank - 1 &&
-                !board.map(\.location).contains(move.destination) {
-                return
-            }
+                !board.map(\.location).contains(move.destination)
+            
             // Pawn opening double move
-            else if sourceRank == 2 &&
+            let isOpeningMove = sourceRank == 2 &&
                 sourceFile == destFile &&
-                sourceRank == destRank - 2 {
-                return
-            }
+                sourceRank == destRank - 2
+            
             // Pawn Capture
-            else if (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
+            let isCapture = (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
                 sourceRank == destRank - 1 &&
-                board.map(\.location).contains(move.destination) {
-                return
+                board.map(\.location).contains(move.destination)
+            
+            // En passant: https://en.wikipedia.org/wiki/En_passant
+            let isEnPassant = history.last.flatMap { previousMove in
+                previousMove.piece.kind == .pawn &&
+                    previousMove.piece.location.rank == 7 &&
+                    previousMove.destination.rank == 5 &&
+                    move.destination.rank == 6 &&
+                    move.destination.file == previousMove.piece.location.file
+            } ?? false
+            
+            guard isStandardMove || isOpeningMove || isCapture || isEnPassant else {
+                throw MoveError.invalidMove
             }
-            //TODO: en passant
-            // invalid move
-            throw MoveError.invalidMove
         } else {
             // Standard pawn move
-            if sourceFile == destFile &&
+            let isStandardMove = sourceFile == destFile &&
                 sourceRank == destRank + 1 &&
-                !board.map(\.location).contains(move.destination) {
-                return
-            }
+                !board.map(\.location).contains(move.destination)
+            
             // Pawn opening double move
-            else if sourceRank == 7  &&
+            let isOpeningMove = sourceRank == 7 &&
                 sourceFile == destFile &&
-                sourceRank == destRank + 2 {
-                return
-            }
+                sourceRank == destRank + 2
+            
             // Pawn Capture
-            else if (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
+            let isCapture = (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
                 sourceRank == destRank + 1 &&
-                board.map(\.location).contains(move.destination) {
-                return
+                board.map(\.location).contains(move.destination)
+            
+            // En passant: https://en.wikipedia.org/wiki/En_passant
+            let isEnPassant = history.last.flatMap { previousMove in
+                previousMove.piece.kind == .pawn &&
+                    previousMove.piece.location.rank == 2 &&
+                    previousMove.destination.rank == 4 &&
+                    move.destination.rank == 3 &&
+                    move.destination.file == previousMove.piece.location.file
+            } ?? false
+            
+            guard isStandardMove || isOpeningMove || isCapture || isEnPassant else {
+                throw MoveError.invalidMove
             }
-            //TODO: en passant
-            // invalid move
-            throw MoveError.invalidMove
         }
     }
 }
@@ -253,18 +318,20 @@ extension Chess {
     
     /// Returns true if the given piece is attackable by an opponents piece.
     static func isThreatened(piece: Piece, board: [Piece]) -> Bool {
-        // A piece is threatened if the opponent has a piece on the board
-        // that can legally move to the pieces location.
+        let opponent: Color = piece.color == .white ? .black : .white
+        return isThreatened(location: piece.location, by: opponent, board: board)
+    }
+    
+    static func isThreatened(location: BoardLocation, by opponent: Color, board: [Piece]) -> Bool {
         let opponentsPieces = board.filter {
-            $0.color != piece.color
+            $0.color == opponent
         }
-        
         return opponentsPieces.contains {
-            let move = Move(piece: $0, destination: piece.location)
+            let move = Move(piece: $0, destination: location)
             do {
                 switch $0.kind {
                 case .king:
-                    try Self.isValidMoveKing(board: board, move: move)
+                    try Self.isValidMoveKing(board: board, move: move, history: [])
                 case .queen:
                     try Self.isValidMoveQueen(board: board, move: move)
                 case .bishop:
@@ -274,7 +341,7 @@ extension Chess {
                 case .rook:
                     try Self.isValidMoveRook(board: board, move: move)
                 case .pawn:
-                    try Self.isValidMovePawn(board: board, move: move)
+                    try Self.isValidMovePawn(board: board, move: move, history: [])
                 }
             } catch {
                 return false

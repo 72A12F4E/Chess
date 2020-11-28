@@ -26,7 +26,7 @@ class Chess: ObservableObject {
     }
     
     func apply(_ move: Move) throws {
-        try Self.isValidMove(board: board, move: move, turn: turn)
+        try Self.isValidMove(board: board, move: move, turn: turn, history: history)
         
         history.append(move)
         // If move is a capture, remove old piece
