@@ -26,12 +26,7 @@ class Chess: ObservableObject {
     
     @discardableResult
     func apply(_ move: Move) -> Result<Void, MoveError> {
-        // You can't move if its not your turn
-        guard turn == move.piece.color else {
-            return .failure(.wrongTurn)
-        }
-        
-        let result = Self.isValidMove(board: board, move: move)
+        let result = Self.isValidMove(board: board, move: move, turn: turn)
         guard case .success = result else {
             return result
         }
@@ -79,7 +74,12 @@ extension Chess {
 // MARK: Move Validation
 
 extension Chess {
-    static func isValidMove(board: [Piece], move: Move) -> Result<Void, MoveError> {
+    static func isValidMove(board: [Piece], move: Move, turn: Color) -> Result<Void, MoveError> {
+        // You can't move if its not your turn
+        guard turn == move.piece.color else {
+            return .failure(.wrongTurn)
+        }
+        
         // You can't move to the same spot.
         guard move.piece.location != move.destination else {
             return .failure(.moveToSameLocation)
@@ -96,6 +96,29 @@ extension Chess {
             }.map(\.location))
             .contains(move.destination) else {
             return .failure(.noCaptureOwnPiece)
+        }
+        
+        // If a move would place your own king in check, its not a valid move
+        let isOwnKingThreatened = board
+            .first(where: { $0.kind == .king && $0.color == turn })
+            .flatMap {
+                var newBoardState = board
+                // If move is a capture, remove old piece
+                if let capturedIndex = board.firstIndex(where: { $0.location == move.destination }) {
+                    newBoardState.remove(at: capturedIndex)
+                }
+                // Replace existing piece with the one that just moved
+                if let index = newBoardState.firstIndex(of: move.piece) {
+                    newBoardState[index] = Piece(
+                        kind: move.piece.kind,
+                        color: move.piece.color,
+                        location: move.destination
+                    )
+                }
+                return isThreatened(piece: $0, board: newBoardState)
+            } ?? false
+        guard !isOwnKingThreatened else {
+            return .failure(.placesKingInCheck)
         }
         
         switch move.piece.kind {
@@ -289,9 +312,28 @@ extension Chess {
     static func isThreatened(piece: Piece, board: [Piece]) -> Bool {
         // A piece is threatened if the opponent has a piece on the board
         // that can legally move to the described location.
-        board.filter { $0.color != piece.color }
-            .contains {
-            if case .success = isValidMove(board: board, move: Move(piece: $0, destination: piece.location)) {
+        let opponentsPieces = board.filter {
+            $0.color != piece.color
+        }
+        
+        return opponentsPieces.contains {
+            let result: Result<(), MoveError>
+            let move = Move(piece: $0, destination: piece.location)
+            switch $0.kind {
+            case .king:
+                result = Self.isValidMoveKing(board: board, move: move)
+            case .queen:
+                result = Self.isValidMoveQueen(board: board, move: move)
+            case .bishop:
+                result = Self.isValidMoveBishop(board: board, move: move)
+            case .knight:
+                result = Self.isValidMoveKnight(board: board, move: move)
+            case .rook:
+                result = Self.isValidMoveRook(board: board, move: move)
+            case .pawn:
+                result = Self.isValidMovePawn(board: board, move: move)
+            }
+            if case .success = result {
                 return true
             }
             return false

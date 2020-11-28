@@ -14,7 +14,7 @@ class KnightTests: XCTestCase {
             Move(piece: Piece(kind: .knight, color: .white, location: .b1), destination: .c3),
             Move(piece: Piece(kind: .knight, color: .black, location: .g8), destination: .f6)
         ].forEach {
-            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0).get())
+            XCTAssertNoThrow(try Chess.isValidMove(board: initialBoardState, move: $0, turn: $0.piece.color).get())
         }
     }
     
@@ -24,7 +24,8 @@ class KnightTests: XCTestCase {
         XCTAssertThrowsError(
             try Chess.isValidMove(
                 board: board,
-                move: Move(piece: knight, destination: .b2)
+                move: Move(piece: knight, destination: .b2),
+                turn: .white
             ).get()
         )
     }
