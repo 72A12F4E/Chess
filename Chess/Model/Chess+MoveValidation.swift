@@ -94,8 +94,11 @@ extension Chess {
     static func isValidMoveQueen(board: [Piece], move: Move) throws {
         // A queen is just a combination of a Rook & Bishop
         // so we can re-use their validation rules :-)
-        try isValidMoveRook(board: board, move: move)
-        try isValidMoveBishop(board: board, move: move)
+        do {
+            try isValidMoveRook(board: board, move: move)
+        } catch {
+            try isValidMoveBishop(board: board, move: move)
+        }
     }
     
     static func isValidMoveBishop(board: [Piece], move: Move) throws {

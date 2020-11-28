@@ -25,6 +25,8 @@
 		250B998C256F7B8300AAD4B2 /* MoveHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250B998B256F7B8300AAD4B2 /* MoveHistoryView.swift */; };
 		25585FC42571AD96004FF559 /* BishopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25585FC32571AD96004FF559 /* BishopTests.swift */; };
 		25585FC82571D9EF004FF559 /* Chess+MoveValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25585FC72571D9EF004FF559 /* Chess+MoveValidation.swift */; };
+		25585FCC2571DD9E004FF559 /* KingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25585FCB2571DD9E004FF559 /* KingTests.swift */; };
+		25585FD22571DDBC004FF559 /* QueenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25585FD12571DDBC004FF559 /* QueenTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +62,8 @@
 		250B998B256F7B8300AAD4B2 /* MoveHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveHistoryView.swift; sourceTree = "<group>"; };
 		25585FC32571AD96004FF559 /* BishopTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BishopTests.swift; sourceTree = "<group>"; };
 		25585FC72571D9EF004FF559 /* Chess+MoveValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chess+MoveValidation.swift"; sourceTree = "<group>"; };
+		25585FCB2571DD9E004FF559 /* KingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KingTests.swift; sourceTree = "<group>"; };
+		25585FD12571DDBC004FF559 /* QueenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueenTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,12 +142,14 @@
 			isa = PBXGroup;
 			children = (
 				250B996A256F223D00AAD4B2 /* ChessTests.swift */,
+				25585FCB2571DD9E004FF559 /* KingTests.swift */,
+				25585FD12571DDBC004FF559 /* QueenTests.swift */,
+				25585FC32571AD96004FF559 /* BishopTests.swift */,
+				250B9987256F6ECE00AAD4B2 /* KnightTests.swift */,
+				250B997C256F470F00AAD4B2 /* RookTests.swift */,
 				250B9978256F387B00AAD4B2 /* PawnTests.swift */,
 				250B9974256F28E400AAD4B2 /* PieceTests.swift */,
 				250B996C256F223D00AAD4B2 /* Info.plist */,
-				250B997C256F470F00AAD4B2 /* RookTests.swift */,
-				250B9987256F6ECE00AAD4B2 /* KnightTests.swift */,
-				25585FC32571AD96004FF559 /* BishopTests.swift */,
 			);
 			path = ChessTests;
 			sourceTree = "<group>";
@@ -268,8 +274,10 @@
 				250B997D256F470F00AAD4B2 /* RookTests.swift in Sources */,
 				250B9979256F387B00AAD4B2 /* PawnTests.swift in Sources */,
 				250B9975256F28E400AAD4B2 /* PieceTests.swift in Sources */,
+				25585FD22571DDBC004FF559 /* QueenTests.swift in Sources */,
 				250B996B256F223D00AAD4B2 /* ChessTests.swift in Sources */,
 				250B9988256F6ECE00AAD4B2 /* KnightTests.swift in Sources */,
+				25585FCC2571DD9E004FF559 /* KingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
