@@ -349,4 +349,32 @@ extension Chess {
             return true
         }
     }
+    
+    
+    /// A player is in checkmate if their king is threatened and there are no possible moves
+    /// that would remove their king from check.
+    /// - Parameters:
+    ///   - color: the color to check for checkmate
+    ///   - board: the current state of the board
+    ///   - history: the move history
+    /// - Returns: `true` if `color`s king is in checkmate
+    static func isCheckmate(color: Color, board: [Piece], history: [Move]) -> Bool {
+        guard let king = board.first(where: { $0.kind == .king && $0.color == color }) else {
+             return true
+        }
+        return isThreatened(piece: king, board: board) && board
+            .filter { color == $0.color }
+            .flatMap { piece in
+                BoardLocation.allCases.compactMap { location in
+                    Move(piece: piece, destination: location)
+                }
+            }.contains(where: {
+                do {
+                    try Chess.isValidMove(board: board, move: $0, turn: color, history: history)
+                    return true
+                } catch {
+                    return false
+                }
+            })
+    }
 }

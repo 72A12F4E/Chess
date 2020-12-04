@@ -17,7 +17,6 @@ struct MoveHistoryView: View {
                 ForEach(chess.history, id: \.description) { move in
                     Text(move.description)
                         .lineLimit(1)
-                        
                 }
             }
         }.padding()    }

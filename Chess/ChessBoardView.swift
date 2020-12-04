@@ -37,7 +37,7 @@ struct ChessBoardView: View {
                 }
             }
         }
-        .border(SwiftUI.Color.black, width: 2)
+        .border(SwiftUI.Color.black, width: 1)
         .aspectRatio(1.0, contentMode: .fit)
         .alert(isPresented: $isShowingError) {
             Alert(
@@ -82,7 +82,6 @@ struct ChessBoardView: View {
         ZStack {
             Rectangle()
                 .foregroundColor(color(rank: rank, file: file))
-                .border(SwiftUI.Color.black, width: 1)
                 .onTapGesture {
                     onSquareTapped(location)
                 }
@@ -140,7 +139,9 @@ struct ChessBoardView: View {
         if selectedSquare == location {
             return .yellow
         }
-        return (file + (rank - 1 * 8)).isMultiple(of: 2) ? .gray : .white
+        let green = SwiftUI.Color(red: 0.462, green: 0.576, blue: 0.329, opacity: 1)
+        let white = SwiftUI.Color(red: 0.917, green: 0.917, blue: 0.811, opacity: 1)
+        return (file + (rank - 1 * 8)).isMultiple(of: 2) ? green : white
     }
 }
 

@@ -14,6 +14,7 @@ class Chess: ObservableObject {
     @Published var board: [Piece]
     @Published var history: [Move]
     @Published var inCheck: Color?
+    @Published var winner: Color?
     
     init(
         turn: Color = .white,
@@ -26,6 +27,7 @@ class Chess: ObservableObject {
     }
     
     func apply(_ move: Move) throws {
+        guard winner == nil else { return }
         try Self.isValidMove(board: board, move: move, turn: turn, history: history)
         
         history.append(move)
@@ -70,10 +72,22 @@ class Chess: ObservableObject {
                 "move": move.description
             ])
         }
-        self.inCheck = board.first(where: {
+        inCheck = board.first(where: {
             $0.kind == .king && Self.isThreatened(piece: $0, board: board)}
         )?.color
         turn = turn == .white ? .black : .white
+        
+        if Self.isCheckmate(color: turn, board: board, history: history) {
+            winner = turn == .white ? .black : .white
+        }
+    }
+    
+    func reset() {
+        turn = .white
+        board = initialBoardState
+        history = []
+        inCheck = nil
+        winner = nil
     }
     
     private func panic(_ dictionary: [String: String]) -> Never {
