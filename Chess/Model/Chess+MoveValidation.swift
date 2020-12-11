@@ -263,7 +263,8 @@ extension Chess {
             let isOpeningMove = sourceRank == 2 &&
                 sourceFile == destFile &&
                 sourceRank == destRank - 2 &&
-                !board.map(\.location).contains(move.destination)
+                !board.map(\.location).contains(move.destination) &&
+                !board.map(\.location).contains(BoardLocation(file: destFile, rank: destRank - 1))
             
             // Pawn Capture
             let isCapture = (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
@@ -292,8 +293,9 @@ extension Chess {
             let isOpeningMove = sourceRank == 7 &&
                 sourceFile == destFile &&
                 sourceRank == destRank + 2 &&
-                !board.map(\.location).contains(move.destination)
-            
+                !board.map(\.location).contains(move.destination) &&
+                !board.map(\.location).contains(BoardLocation(file: destFile, rank: destRank + 1))
+                
             // Pawn Capture
             let isCapture = (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
                 sourceRank == destRank + 1 &&
@@ -364,7 +366,7 @@ extension Chess {
         guard let king = board.first(where: { $0.kind == .king && $0.color == color }) else {
              return true
         }
-        return isThreatened(piece: king, board: board) && board
+        return isThreatened(piece: king, board: board) && !board
             .filter { color == $0.color }
             .flatMap { piece in
                 BoardLocation.allCases.compactMap { location in
