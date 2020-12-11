@@ -106,6 +106,7 @@ struct ChessBoardView: View {
     }
     
     private func onPieceTapped(_ piece: Piece, location: BoardLocation) {
+        guard chess.winner == nil else { return }
         guard selectedSquare != location else {
             selectedSquare = nil
             return

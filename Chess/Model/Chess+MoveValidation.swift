@@ -262,7 +262,8 @@ extension Chess {
             // Pawn opening double move
             let isOpeningMove = sourceRank == 2 &&
                 sourceFile == destFile &&
-                sourceRank == destRank - 2
+                sourceRank == destRank - 2 &&
+                !board.map(\.location).contains(move.destination)
             
             // Pawn Capture
             let isCapture = (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
@@ -290,7 +291,8 @@ extension Chess {
             // Pawn opening double move
             let isOpeningMove = sourceRank == 7 &&
                 sourceFile == destFile &&
-                sourceRank == destRank + 2
+                sourceRank == destRank + 2 &&
+                !board.map(\.location).contains(move.destination)
             
             // Pawn Capture
             let isCapture = (sourceFile == destFile - 1 || sourceFile == destFile + 1) &&
